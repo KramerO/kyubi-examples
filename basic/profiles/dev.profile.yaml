@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: Profile
+metadata:
+  name: dev
+  description: Lokale Entwicklung
+layout: etl_default
+allow_agent_runs: true
+parameters:
+  DATA_ROOT: "${env.KYUBI_EXAMPLE_DATA}"
