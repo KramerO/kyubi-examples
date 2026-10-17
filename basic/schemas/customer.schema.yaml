@@ -2,7 +2,7 @@ apiVersion: kyubi/v1
 kind: Schema
 metadata:
   name: customer
-  description: Kundenstamm aus dem CRM
+  description: Kundenstamm aus dem CRM-Export (flach, CSV)
 fields:
   - {name: customer_id, type: int64, nullable: false}
   - {name: name, type: string, max_length: 100}
@@ -10,15 +10,9 @@ fields:
   - {name: birth_date, type: date, sensitive: true}
   - {name: created_at, type: timestamp, unit: ms, tz: Europe/Berlin}
   - {name: status, type: enum, values: [active, inactive, blocked], default: active}
-  - name: tags
-    type: list
-    items: {type: string}
-  - name: address
-    type: record
-    fields:
-      - {name: street, type: string}
-      - {name: zip, type: string, max_length: 5}
-      - {name: city, type: string}
+  - {name: street, type: string}
+  - {name: zip, type: string, max_length: 5}
+  - {name: city, type: string}
 keys:
   primary: [customer_id]
 validation:

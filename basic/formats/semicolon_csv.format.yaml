@@ -1,0 +1,16 @@
+apiVersion: kyubi/v1
+kind: Format
+metadata:
+  name: semicolon_csv
+  description: Export aus dem CRM (Semikolon, deutsches Zahlenformat)
+type: delimited
+delimiter: ";"
+quote: '"'
+header: true
+encoding: utf-8
+newline: auto
+null_values: ["", "NULL"]
+field_formats:
+  birth_date: "%d.%m.%Y"
+  created_at: "%d.%m.%Y %H:%M:%S"
+  amount: {decimal_separator: ",", thousands_separator: "."}

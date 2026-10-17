@@ -4,7 +4,7 @@ metadata:
   name: customer_clean
   description: Bereinigte Kunden für das DWH
 extends: customer
-drop_fields: [tags]
+drop_fields: [street]
 rename_fields:
   amount: revenue
 add_fields:
