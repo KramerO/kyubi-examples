@@ -1,0 +1,55 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: load_customers
+  description: Kunden-CSV einlesen, aktive Kunden filtern, sortiert als Parquet schreiben
+parameters:
+  - {name: RUN_DATE, type: date, required: true}
+  - {name: IN_DIR, type: path, default: "${DATA_ROOT}/in"}
+  - {name: OUT_DIR, type: path, default: "${DATA_ROOT}/out"}
+components:
+  read:
+    type: input_file
+    params:
+      path: "${IN_DIR}/customers_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+      schema: customer
+      format: semicolon_csv
+  active:
+    type: filter
+    params:
+      condition: "status == 'active'"
+  clean:
+    type: reformat
+    params:
+      output_schema: customer_clean
+      assign:
+        revenue: amount
+        region: "substr(zip, 0, 1)"
+  by_id:
+    type: sort
+    params:
+      key: [customer_id]
+    layout:
+      extends: inherit
+      resources: {max_memory: 8GiB}
+  write:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/customers_${fmt(RUN_DATE, '%Y%m%d')}.parquet"
+      format: {type: parquet, compression: zstd}
+  inactive:
+    type: trash
+flows:
+  - {from: read.out, to: active.in}
+  - {from: active.out, to: clean.in}
+  - {from: active.deselect, to: inactive.in}
+  - {from: clean.out, to: by_id.in}
+  - {from: by_id.out, to: write.in}
+ui:
+  positions:
+    read: [80, 120]
+    active: [300, 120]
+    clean: [520, 120]
+    by_id: [740, 120]
+    write: [960, 120]
+    inactive: [520, 280]

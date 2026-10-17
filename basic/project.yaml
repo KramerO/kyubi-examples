@@ -1,0 +1,7 @@
+apiVersion: kyubi/v1
+kind: Project
+metadata:
+  name: basic
+  description: Beispielprojekt – Kunden aus CSV laden, bereinigen, als Parquet schreiben
+default_profile: dev
+default_layout: etl_default
