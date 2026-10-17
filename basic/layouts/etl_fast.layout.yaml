@@ -1,0 +1,16 @@
+apiVersion: kyubi/v1
+kind: Layout
+metadata:
+  name: etl_fast
+  description: Mehr Speicher und schneller Temp-Bereich für Sort/Rollup
+extends: etl_default
+temp:
+  max_size: 200GiB
+resources:
+  max_memory: 8GiB
+  cpu_limit: 2
+platform:
+  macos:
+    temp: {dirs: ["${env.HOME}/kyubi-fast-tmp/${run.id}"]}
+  linux:
+    temp: {dirs: ["/mnt/nvme/kyubi/tmp/${run.id}"]}

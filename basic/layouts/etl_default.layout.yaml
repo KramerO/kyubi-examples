@@ -1,0 +1,16 @@
+apiVersion: kyubi/v1
+kind: Layout
+metadata:
+  name: etl_default
+  description: Standard für lokale Läufe
+host:
+  pool: local
+workdir: "${kyubi.work_dir}/${run.id}/${component.short_id}"
+temp:
+  dirs: ["${kyubi.temp_dir}/${run.id}"]
+  max_size: 50GiB
+  cleanup: on_success
+resources:
+  max_memory: 4GiB
+env:
+  TZ: Europe/Berlin
