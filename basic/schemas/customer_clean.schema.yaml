@@ -1,0 +1,12 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata:
+  name: customer_clean
+  description: Bereinigte Kunden für das DWH
+extends: customer
+drop_fields: [tags]
+rename_fields:
+  amount: revenue
+add_fields:
+  - {name: region, type: string, max_length: 1}
+  - {name: age, type: int16}
