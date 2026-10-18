@@ -1,0 +1,42 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: clean_customers_python
+  description: Kunden mit Python-Transform bereinigen, Ablehnungen getrennt schreiben
+parameters:
+  - {name: RUN_DATE, type: date, required: true}
+  - {name: IN_DIR, type: path, default: "${DATA_ROOT}/in"}
+  - {name: OUT_DIR, type: path, default: "${DATA_ROOT}/out"}
+components:
+  read:
+    type: input_file
+    params:
+      path: "${IN_DIR}/customers_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+      schema: customer
+      format: semicolon_csv
+  clean:
+    type: reformat
+    params:
+      output_schema: customer_clean
+      transform: transforms/clean_customer.py
+      reject_threshold: {max_rejects: 10}
+  write:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/customers_python_${fmt(RUN_DATE, '%Y%m%d')}.parquet"
+      format: {type: parquet}
+  rejected:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/rejected_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+      format: semicolon_csv
+  errors:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/errors_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+      format: {type: delimited}
+flows:
+  - {from: read.out, to: clean.in}
+  - {from: clean.out, to: write.in}
+  - {from: clean.reject, to: rejected.in}
+  - {from: clean.error, to: errors.in}
