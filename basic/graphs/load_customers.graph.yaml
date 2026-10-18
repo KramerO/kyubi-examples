@@ -48,8 +48,8 @@ flows:
 ui:
   positions:
     read: [80, 120]
-    active: [300, 120]
-    clean: [520, 120]
-    by_id: [740, 120]
-    write: [960, 120]
-    inactive: [520, 280]
+    active: [380, 120]
+    clean: [680, 120]
+    by_id: [980, 120]
+    write: [1280, 120]
+    inactive: [680, 300]
