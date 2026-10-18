@@ -1,0 +1,59 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: customers_by_component
+  description: Wie load_customers, aber mit eigenen Komponenten (Composite + Python)
+parameters:
+  - {name: RUN_DATE, type: date, required: true}
+  - {name: IN_DIR, type: path, default: "${DATA_ROOT}/in"}
+  - {name: OUT_DIR, type: path, default: "${DATA_ROOT}/out"}
+components:
+  read:
+    type: input_file
+    params:
+      path: "${IN_DIR}/customers_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+      schema: customer
+      format: semicolon_csv
+  active:
+    type: components/status_filter
+    params:
+      wanted: active
+  clean:
+    type: reformat
+    params:
+      output_schema: customer_clean
+      assign:
+        revenue: amount
+        region: "substr(zip, 0, 1)"
+  vips:
+    type: components/vip_split
+    params:
+      threshold: 1000
+  write_vip:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/vip_${fmt(RUN_DATE, '%Y%m%d')}.parquet"
+      format: {type: parquet}
+  write_rest:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/rest_${fmt(RUN_DATE, '%Y%m%d')}.parquet"
+      format: {type: parquet}
+  inactive:
+    type: trash
+flows:
+  - {from: read.out, to: active.in}
+  - {from: active.out, to: clean.in}
+  - {from: active.other, to: inactive.in}
+  - {from: clean.out, to: vips.in}
+  - {from: vips.vip, to: write_vip.in}
+  - {from: vips.rest, to: write_rest.in}
+ui:
+  positions:
+    read: [80, 120]
+    active: [380, 120]
+    clean: [680, 120]
+    vips: [980, 120]
+    write_vip: [1280, 60]
+    write_rest: [1280, 240]
+    inactive: [680, 320]

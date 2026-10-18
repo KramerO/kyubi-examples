@@ -1,0 +1,12 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: status_filter
+components:
+  keep:
+    type: filter
+    params:
+      condition: "status == '${wanted}'"
+ui:
+  positions:
+    keep: [80, 80]

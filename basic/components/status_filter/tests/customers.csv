@@ -1,0 +1,7 @@
+customer_id;name;amount;birth_date;created_at;status;street;zip;city
+1001;Anna Schmidt;1.234,50;01.05.1990;03.01.2024 09:15:00;active;Hauptstr. 1;10115;Berlin
+1002;Bert Müller;99,90;24.12.2001;15.02.2024 14:00:00;active;Ring 5;20095;Hamburg
+1003;Carla Weiß;0,00;31.01.1985;20.03.2024 08:00:00;inactive;Marktplatz 2;80331;München
+1004;Dennis Roth;15.000,00;12.07.1978;01.04.2024 17:30:00;active;Domplatz 3;50667;Köln
+1005;"Eva ""Evi"" Klein";42,00;;05.05.2024 12:00:00;blocked;Gasse 7;60311;Frankfurt
+1006;Frank Bauer;NULL;09.09.1999;06.06.2024 06:06:06;active;Allee 9;01067;Dresden

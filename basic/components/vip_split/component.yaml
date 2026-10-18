@@ -1,0 +1,17 @@
+apiVersion: kyubi/v1
+kind: ComponentType
+metadata:
+  name: vip_split
+  description: Trennt Kunden mit Umsatz ab einer Schwelle ab (Python-Komponente)
+version: 1.0.0
+category: Kunden
+ports:
+  inputs:
+    - {name: in}
+  outputs:
+    - {name: vip, schema: "${port.in}"}
+    - {name: rest, schema: "${port.in}"}
+parameters:
+  - {name: threshold, type: float, default: 1000}
+implementation:
+  kind: python

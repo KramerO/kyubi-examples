@@ -1,0 +1,22 @@
+cases:
+  - name: aktive Kunden
+    params: {wanted: active}
+    inputs:
+      in: {file: customers.csv, schema: customer, format: semicolon_csv}
+    expect:
+      out:
+        count: 4
+        records:
+          - {customer_id: 1001}
+          - {customer_id: 1002}
+          - {customer_id: 1004}
+          - {customer_id: 1006}
+      other: {count: 2}
+  - name: gesperrte Kunden
+    params: {wanted: blocked}
+    inputs:
+      in: {file: customers.csv, schema: customer, format: semicolon_csv}
+    expect:
+      out:
+        records:
+          - {customer_id: 1005, status: blocked}

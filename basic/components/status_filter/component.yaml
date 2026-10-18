@@ -1,0 +1,18 @@
+apiVersion: kyubi/v1
+kind: ComponentType
+metadata:
+  name: status_filter
+  description: Lässt nur Kunden mit einem Status durch, die übrigen gehen auf 'other'
+version: 1.0.0
+category: Kunden
+ports:
+  inputs:
+    - {name: in}
+  outputs:
+    - {name: out, schema: "${port.in}"}
+    - {name: other, schema: "${port.in}", optional: true}
+parameters:
+  - {name: wanted, type: enum, values: [active, inactive, blocked], default: active}
+implementation:
+  kind: composite
+  port_mapping: {in: keep.in, out: keep.out, other: keep.deselect}
