@@ -1,0 +1,24 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata:
+  name: clean_customer
+  description: Kunden bereinigen (Mapper-Beispiel, entspricht transforms/clean_customer.py)
+input: {schema: customer}
+output: {schema: customer_clean}
+parameters: [RUN_DATE]
+reject_if:
+  - {when: "rec.birth_date is None", message: birth_date fehlt}
+variables:
+  age: "dates.years_between(rec.birth_date, params.RUN_DATE)"
+filter: "age >= 18"
+fields:
+  customer_id: rec.customer_id
+  name: "strings.normalize_name(rec.name)"
+  revenue: rec.amount
+  birth_date: rec.birth_date
+  created_at: rec.created_at
+  status: rec.status
+  zip: rec.zip
+  city: rec.city
+  region: "rec.zip[:1] if rec.zip else None"
+  age: age
