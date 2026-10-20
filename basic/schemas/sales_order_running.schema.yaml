@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata:
+  name: sales_order_running
+  description: Bestellung mit laufender Summe je Kunde (scan)
+extends: sales_order
+add_fields:
+  - {name: running_total, type: float64}
+  - {name: order_no, type: int64, nullable: false}

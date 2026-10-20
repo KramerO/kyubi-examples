@@ -1,0 +1,86 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: order_pipeline
+  description: Bestellungen erzeugen, prüfen, laufende Summen, Stichprobe, Listen bilden und auflösen
+parameters:
+  - {name: ORDERS, type: int, default: 24}
+  - {name: OUT_DIR, type: path, default: "${DATA_ROOT}/out"}
+components:
+  orders:
+    type: generate_records
+    params:
+      count: "${ORDERS}"
+      output_schema: sales_order
+      assign:
+        order_id: seq
+        customer_id: "1001 + seq - (seq // 3) * 3"
+        amount: "seq * 25.0"
+  check:
+    type: validate_records
+    params:
+      rules:
+        - {rule: "amount <= 500", message: Betrag über Freigabegrenze}
+      reject_threshold: {max_ratio: 0.5}
+  too_high:
+    type: trash
+  running:
+    type: scan
+    params:
+      key: [customer_id]
+      aggregations:
+        running_total: sum(amount)
+        order_no: count()
+      output_schema: sales_order_running
+  copy:
+    type: replicate
+  pick:
+    type: sample
+    params:
+      fraction: 0.5
+      seed: 7
+  write_sample:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/orders_sample.parquet"
+      format: {type: parquet}
+  collect:
+    type: rollup
+    params:
+      key: [customer_id]
+      aggregations:
+        orders: list(order_id)
+        total: sum(amount)
+      output_schema: customer_orders
+  explode:
+    type: normalize
+    params:
+      field: [orders]
+      output_schema: customer_order
+  write_lines:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/customer_orders.parquet"
+      format: {type: parquet}
+flows:
+  - {from: orders.out, to: check.in}
+  - {from: check.reject, to: too_high.in}
+  - {from: check.out, to: running.in}
+  - {from: running.out, to: copy.in}
+  - {from: copy.out, to: pick.in}
+  - {from: copy.out, to: collect.in}
+  - {from: pick.out, to: write_sample.in}
+  - {from: collect.out, to: explode.in}
+  - {from: explode.out, to: write_lines.in}
+ui:
+  positions:
+    orders: [60, 160]
+    check: [320, 160]
+    too_high: [580, 340]
+    running: [580, 160]
+    copy: [840, 160]
+    pick: [1100, 40]
+    write_sample: [1360, 40]
+    collect: [1100, 280]
+    explode: [1360, 280]
+    write_lines: [1620, 280]

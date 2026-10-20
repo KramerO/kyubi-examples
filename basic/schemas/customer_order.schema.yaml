@@ -1,0 +1,10 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata:
+  name: customer_order
+  description: Eine Zeile je Kunde und Bestellung (normalize)
+fields:
+  - {name: customer_id, type: int64, nullable: false}
+  - {name: orders, type: int64}
+  - {name: orders_index, type: int64, nullable: false}
+  - {name: total, type: float64}
