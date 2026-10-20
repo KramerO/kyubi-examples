@@ -1,0 +1,26 @@
+apiVersion: kyubi/v1
+kind: Plan
+metadata:
+  name: daily_customers
+  description: Täglich 02:00 – Kundendatei des Vortags laden, danach Auswertung je Komponente
+calendar: de_business_days
+schedule: {cron: "0 2 * * *", timezone: Europe/Berlin, business_date: previous_business_day}
+parameters:
+  RUN_DATE: "${instance.business_date}"
+jobs:
+  wait_file:
+    wait_for_file:
+      path: "${env.KYUBI_EXAMPLE_DATA}/in/customers_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+      timeout: 4h
+      poll: 30s
+  load:
+    graph: load_customers
+    depends_on: [wait_file]
+    resources: {file_slots: 1}
+    retries: {count: 2, delay: 1m}
+    timeout: 2h
+    sla: {finish_by: "06:00"}
+  by_component:
+    graph: customers_by_component
+    depends_on: [load]
+    resources: {file_slots: 1}

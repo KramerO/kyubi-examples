@@ -5,3 +5,6 @@ metadata:
   description: Beispielprojekt – Kunden aus CSV laden, bereinigen, als Parquet schreiben
 default_profile: dev
 default_layout: etl_default
+scheduler:
+  resources: {file_slots: 2}
+  max_parallel_jobs: 4

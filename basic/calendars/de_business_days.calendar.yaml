@@ -1,0 +1,19 @@
+apiVersion: kyubi/v1
+kind: Calendar
+metadata:
+  name: de_business_days
+  description: Arbeitstage Mo–Fr ohne bundesweite Feiertage 2026/2027
+weekdays: [mon, tue, wed, thu, fri]
+holidays:
+  - 2026-10-03
+  - 2026-12-25
+  - 2026-12-26
+  - 2027-01-01
+  - 2027-03-26
+  - 2027-03-29
+  - 2027-05-01
+  - 2027-05-06
+  - 2027-05-17
+  - 2027-10-03
+  - 2027-12-25
+  - 2027-12-26
