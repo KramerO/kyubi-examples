@@ -1,0 +1,11 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata:
+  name: region
+  description: Vertriebsregionen je Postleitzahl
+fields:
+  - {name: zip, type: string, max_length: 5, nullable: false}
+  - {name: region_name, type: string}
+  - {name: manager, type: string}
+keys:
+  primary: [zip]

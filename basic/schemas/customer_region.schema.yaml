@@ -1,0 +1,12 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata:
+  name: customer_region
+  description: Kunde mit Vertriebsregion (Ergebnis des Joins)
+fields:
+  - {name: customer_id, type: int64, nullable: false}
+  - {name: name, type: string, max_length: 100}
+  - {name: zip, type: string, max_length: 5}
+  - {name: city, type: string}
+  - {name: region_name, type: string}
+  - {name: manager, type: string}

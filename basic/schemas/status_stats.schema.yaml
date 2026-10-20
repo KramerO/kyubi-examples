@@ -1,0 +1,10 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata:
+  name: status_stats
+  description: Kennzahlen je Kundenstatus (Ergebnis des Rollups)
+fields:
+  - {name: status, type: enum, values: [active, inactive, blocked]}
+  - {name: customers, type: int64, nullable: false}
+  - {name: total_amount, type: decimal, precision: 18, scale: 2}
+  - {name: last_created, type: timestamp, unit: ms, tz: Europe/Berlin}

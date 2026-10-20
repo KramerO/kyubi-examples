@@ -1,0 +1,80 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: customer_analysis
+  description: Kennzahlen je Status (rollup), Dubletten entfernen (dedup), Regionen anreichern (join)
+parameters:
+  - {name: RUN_DATE, type: date, required: true}
+  - {name: IN_DIR, type: path, default: "${DATA_ROOT}/in"}
+  - {name: OUT_DIR, type: path, default: "${DATA_ROOT}/out"}
+components:
+  read:
+    type: input_file
+    params:
+      path: "${IN_DIR}/customers_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+      schema: customer
+      format: semicolon_csv
+  copy:
+    type: replicate
+  stats:
+    type: rollup
+    params:
+      key: [status]
+      aggregations:
+        customers: count()
+        total_amount: sum(amount)
+        last_created: max(created_at)
+      output_schema: status_stats
+  write_stats:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/status_stats_${fmt(RUN_DATE, '%Y%m%d')}.parquet"
+      format: {type: parquet}
+  unique:
+    type: dedup
+    params:
+      key: [name]
+      keep: first
+  duplicates:
+    type: trash
+  regions:
+    type: input_file
+    params:
+      path: "${IN_DIR}/regions.csv"
+      schema: region
+      format: {type: delimited, delimiter: ";", header: true}
+  enrich:
+    type: join
+    params:
+      key: [zip]
+      join_type: left
+      output_schema: customer_region
+  unused_regions:
+    type: trash
+  write_regions:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/customer_regions_${fmt(RUN_DATE, '%Y%m%d')}.parquet"
+      format: {type: parquet}
+flows:
+  - {from: read.out, to: copy.in}
+  - {from: copy.out, to: stats.in}
+  - {from: copy.out, to: unique.in}
+  - {from: stats.out, to: write_stats.in}
+  - {from: unique.out, to: enrich.in0}
+  - {from: unique.dups, to: duplicates.in}
+  - {from: regions.out, to: enrich.in1}
+  - {from: enrich.out, to: write_regions.in}
+  - {from: enrich.unused1, to: unused_regions.in}
+ui:
+  positions:
+    read: [60, 160]
+    copy: [340, 160]
+    stats: [620, 40]
+    write_stats: [900, 40]
+    unique: [620, 260]
+    duplicates: [900, 420]
+    regions: [620, 460]
+    enrich: [900, 260]
+    unused_regions: [1180, 420]
+    write_regions: [1180, 260]
