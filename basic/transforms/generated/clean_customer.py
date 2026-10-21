@@ -2,7 +2,7 @@
 # source: mappings/clean_customer.mapping.yaml  sha256: 34299a09d49c9a64134af545000da341eecb7dbf0f0eb05552db29b478c53d59
 # kyubi-map: 10=reject_if[0] 11=reject_if[0] 12=variables.age 13=filter 14=filter 16=fields.customer_id 17=fields.name 18=fields.revenue 19=fields.birth_date 20=fields.created_at 21=fields.status 22=fields.zip 23=fields.city 24=fields.region 25=fields.age
 
-from kyubi.lib import coalesce, dates, iif, is_null, numbers, reject, strings
+from kyubi.lib import coalesce, dates, iif, is_null, lists, numbers, reject, strings, vectors, windows
 
 
 def transform(rec, ctx):
