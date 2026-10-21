@@ -66,6 +66,9 @@ flows:
   - {from: regions.out, to: enrich.in1}
   - {from: enrich.out, to: write_regions.in}
   - {from: enrich.unused1, to: unused_regions.in}
+phases:                    # Phase 1 bereinigt, Phase 2 reichert aus dem Checkpoint an
+  - [read, copy, stats, write_stats, unique, duplicates]
+  - [regions, enrich, unused_regions, write_regions]
 ui:
   positions:
     read: [60, 160]
