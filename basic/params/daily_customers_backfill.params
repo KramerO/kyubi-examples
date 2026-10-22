@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: ParameterSet
+metadata:
+  name: daily_customers_backfill
+  description: Nachladen – Laufdatum fest, Daten aus dem Archiv (Sandbox DATA_ROOT)
+plan: daily_customers
+parameters:
+  RUN_DATE: "2026-10-17"
+  DATA_ROOT: "${env.KYUBI_EXAMPLE_DATA}"

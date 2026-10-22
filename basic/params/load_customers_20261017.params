@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: ParameterSet
+metadata:
+  name: load_customers_20261017
+  description: Testladung vom 17.10.2026 (Ausgabe in out_test)
+graph: load_customers
+parameters:
+  RUN_DATE: "2026-10-17"
+  OUT_DIR: "${DATA_ROOT}/out_test"
