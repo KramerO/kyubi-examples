@@ -1,0 +1,7 @@
+apiVersion: kyubi/v1
+kind: Job
+metadata:
+  name: test_load_20261017
+  description: Testladung mit Parameterset – nur manuell (enabled false)
+target: {param_set: load_customers_20261017}
+enabled: false

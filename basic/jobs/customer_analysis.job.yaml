@@ -1,0 +1,12 @@
+apiVersion: kyubi/v1
+kind: Job
+metadata:
+  name: customer_analysis
+  description: Kundenanalyse (2 Phasen) nach dem Laden
+target: {graph: customer_analysis}
+params:
+  RUN_DATE: "${instance.business_date}"
+calendar: de_business_days
+start_time: "03:00"
+depends_on:
+  - job: load_customers

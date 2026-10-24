@@ -1,0 +1,13 @@
+apiVersion: kyubi/v1
+kind: Job
+metadata:
+  name: customers_by_component
+  description: Auswertung je Komponente nach dem Laden
+target: {graph: customers_by_component}
+params:
+  RUN_DATE: "${instance.business_date}"
+calendar: de_business_days
+start_time: "02:00"
+depends_on:
+  - job: load_customers
+resources: {file_slots: 1}

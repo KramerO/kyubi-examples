@@ -1,0 +1,7 @@
+apiVersion: kyubi/v1
+kind: Job
+metadata:
+  name: order_pipeline
+  description: Bestellungen erzeugen und auswerten (jeden Tag, kein Kalender)
+target: {graph: order_pipeline}
+start_time: "06:00"

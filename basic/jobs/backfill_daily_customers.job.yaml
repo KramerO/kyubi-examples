@@ -1,0 +1,7 @@
+apiVersion: kyubi/v1
+kind: Job
+metadata:
+  name: backfill_daily_customers
+  description: Ganzen Plan daily_customers nachfahren – nur manuell
+target: {plan: daily_customers}
+enabled: false
