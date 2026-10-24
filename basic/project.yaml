@@ -8,3 +8,5 @@ default_layout: etl_default
 scheduler:
   resources: {file_slots: 2}
   max_parallel_jobs: 4
+  timezone: Europe/Berlin  # Startzeiten der Jobs und Tageswechsel (D-106)
+  new_day: "00:05"
