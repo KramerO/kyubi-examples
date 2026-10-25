@@ -1,0 +1,25 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: pilot_setup
+  description: Schema und Tabellen des Piloten anlegen (einmalig, idempotent)
+components:
+  ddl:
+    type: execute_sql
+    params:
+      connection: pilot
+      sql: |
+        CREATE SCHEMA IF NOT EXISTS pilot;
+        CREATE TABLE IF NOT EXISTS pilot.stg_customer (customer_id bigint NOT NULL, name text,
+          email text, city text);
+        CREATE TABLE IF NOT EXISTS pilot.dim_customer (sk bigint PRIMARY KEY,
+          customer_id bigint NOT NULL, name text, email text, city text, valid_from date,
+          valid_to date, is_current boolean, run_id text);
+        CREATE INDEX IF NOT EXISTS dim_customer_current ON pilot.dim_customer (customer_id)
+          WHERE is_current;
+        CREATE TABLE IF NOT EXISTS pilot.fact_order (order_id bigint PRIMARY KEY,
+          order_date date NOT NULL, customer_sk bigint NOT NULL, product_id bigint,
+          category text, quantity integer, amount numeric(14,2));
+        CREATE INDEX IF NOT EXISTS fact_order_date ON pilot.fact_order (order_date);
+        CREATE TABLE IF NOT EXISTS pilot.mart_sales_day (order_date date NOT NULL,
+          category text, city text, orders bigint, quantity bigint, revenue numeric(16,2))

@@ -1,0 +1,13 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: fact_order}
+fields:
+  - {name: order_id, type: int64, nullable: false}
+  - {name: order_date, type: date, nullable: false}
+  - {name: customer_sk, type: int64, nullable: false}
+  - {name: product_id, type: int64}
+  - {name: category, type: string}
+  - {name: quantity, type: int32}
+  - {name: amount, type: decimal, precision: 14, scale: 2}
+keys:
+  primary: [order_id]

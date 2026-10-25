@@ -1,0 +1,68 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: load_orders
+  description: Bestellungen des Tages (4 Dateien, 4 Prozesse) anreichern und als Fakten laden
+parameters:
+  - {name: RUN_DATE, type: date, required: true}
+  - {name: IN_DIR, type: path, default: "${env.KYUBI_PILOT_DATA}/in"}
+  - {name: OUT_DIR, type: path, default: "${env.KYUBI_PILOT_DATA}/out"}
+components:
+  clean:
+    type: execute_sql
+    params:
+      connection: pilot
+      sql: "DELETE FROM pilot.fact_order WHERE order_date = '${RUN_DATE}'"
+  read:
+    type: input_file
+    params:
+      path: "${IN_DIR}/orders_${fmt(RUN_DATE, '%Y%m%d')}_*.csv"
+      schema: order_src
+      format: {type: delimited, header: true}
+    layout: {partitions: 4}
+  check:
+    type: validate_records
+    params:
+      rules:
+        - {rule: "quantity > 0", message: Menge muss positiv sein}
+      reject_threshold: {max_ratio: 0.01}
+    layout: {partitions: 4}
+  products:
+    type: input_file
+    params: {path: "${IN_DIR}/products.parquet", schema: product, format: {type: parquet}}
+  product:
+    type: lookup
+    params: {key: [product_id], output_schema: order_product}
+    layout: {partitions: 4}
+  customers:
+    type: input_table
+    params:
+      connection: pilot
+      query: "SELECT customer_id, sk, city FROM pilot.dim_customer WHERE is_current"
+      schema: customer_key
+  customer:
+    type: lookup
+    params:
+      key: [customer_id]
+      output_schema: fact_order
+      assign: {customer_sk: sk, amount: "quantity * unit_price"}
+    layout: {partitions: 4}
+  write:
+    type: output_table
+    params: {connection: pilot, table: pilot.fact_order, mode: append, create: false}
+  unmatched:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/orders_unmatched_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+      format: {type: delimited, header: true}
+flows:
+  - {from: read.out, to: check.in}
+  - {from: check.out, to: product.in}
+  - {from: products.out, to: product.lookup}
+  - {from: product.out, to: customer.in}
+  - {from: customers.out, to: customer.lookup}
+  - {from: customer.out, to: write.in}
+  - {from: customer.unmatched, to: unmatched.in}
+phases:
+  - [clean]
+  - [read, check, products, product, customers, customer, write, unmatched]

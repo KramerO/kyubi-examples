@@ -1,0 +1,10 @@
+apiVersion: kyubi/v1
+kind: Project
+metadata:
+  name: dwh_pilot
+  description: Pilot – synthetisches DWH (Staging → SCD2-Dimension → Fakten → Mart) als Jobnetz
+scheduler:
+  resources: {db_slots: 2}
+  max_parallel_jobs: 3
+  timezone: Europe/Berlin
+  new_day: "00:05"

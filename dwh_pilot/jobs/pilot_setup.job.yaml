@@ -1,0 +1,5 @@
+apiVersion: kyubi/v1
+kind: Job
+metadata: {name: pilot_setup, description: Schema und Tabellen anlegen – einmalig von Hand}
+target: {graph: pilot_setup}
+enabled: false

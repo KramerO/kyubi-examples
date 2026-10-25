@@ -1,0 +1,11 @@
+apiVersion: kyubi/v1
+kind: Job
+metadata: {name: sales_mart, description: Tagesumsatz je Kategorie und Stadt}
+target: {graph: sales_mart}
+params: {RUN_DATE: "${instance.business_date}"}
+calendar: de_business_days
+start_time: "02:00"
+depends_on:
+  - job: load_orders
+resources: {db_slots: 1}
+sla: {finish_by: "06:00"}

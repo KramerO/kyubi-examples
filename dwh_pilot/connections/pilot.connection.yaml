@@ -1,0 +1,10 @@
+apiVersion: kyubi/v1
+kind: Connection
+metadata: {name: pilot, description: PostgreSQL aus scripts/db-up.sh (Schema pilot)}
+type: postgres
+options:
+  host: 127.0.0.1
+  port: 55432
+  database: kyubi_test
+  user: kyubi
+  password: "${secret('pilot/password')}"   # KYUBI_SECRET_PILOT_PASSWORD

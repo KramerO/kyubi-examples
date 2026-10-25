@@ -1,0 +1,37 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: sales_mart
+  description: Tagesumsatz je Kategorie und Stadt (Fakten + aktuelle Kundenstadt)
+parameters:
+  - {name: RUN_DATE, type: date, required: true}
+components:
+  clean:
+    type: execute_sql
+    params:
+      connection: pilot
+      sql: "DELETE FROM pilot.mart_sales_day WHERE order_date = '${RUN_DATE}'"
+  facts:
+    type: input_table
+    params:
+      connection: pilot
+      query: >-
+        SELECT f.order_date, f.category, d.city, f.quantity, f.amount
+        FROM pilot.fact_order f JOIN pilot.dim_customer d ON d.sk = f.customer_sk
+        WHERE f.order_date = '${RUN_DATE}'
+      schema: fact_city
+  sum:
+    type: rollup
+    params:
+      key: [order_date, category, city]
+      output_schema: sales_day
+      aggregations: {orders: count(), quantity: sum(quantity), revenue: sum(amount)}
+  write:
+    type: output_table
+    params: {connection: pilot, table: pilot.mart_sales_day, mode: append, create: false}
+flows:
+  - {from: facts.out, to: sum.in}
+  - {from: sum.out, to: write.in}
+phases:
+  - [clean]
+  - [facts, sum, write]

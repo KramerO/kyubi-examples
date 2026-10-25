@@ -1,0 +1,28 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: stage_customers
+  description: Kunden-Schnappschuss des Tages prüfen und ins Staging laden
+parameters:
+  - {name: RUN_DATE, type: date, required: true}
+  - {name: IN_DIR, type: path, default: "${env.KYUBI_PILOT_DATA}/in"}
+components:
+  read:
+    type: input_file
+    params:
+      path: "${IN_DIR}/customers_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+      schema: customer_src
+      format: {type: delimited, header: true}
+  check:
+    type: validate_records
+    params:
+      rules:
+        - {rule: "len(email) > 5", message: E-Mail fehlt oder zu kurz}
+        - {rule: "customer_id > 0", message: Kundennummer ungültig}
+      reject_threshold: {max_ratio: 0.01}
+  write:
+    type: output_table
+    params: {connection: pilot, table: pilot.stg_customer, mode: truncate_insert, create: false}
+flows:
+  - {from: read.out, to: check.in}
+  - {from: check.out, to: write.in}

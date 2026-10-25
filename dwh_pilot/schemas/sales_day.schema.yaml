@@ -1,0 +1,10 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: sales_day}
+fields:
+  - {name: order_date, type: date, nullable: false}
+  - {name: category, type: string}
+  - {name: city, type: string}
+  - {name: orders, type: int64}
+  - {name: quantity, type: int64}
+  - {name: revenue, type: decimal, precision: 16, scale: 2}

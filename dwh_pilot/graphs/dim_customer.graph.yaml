@@ -1,0 +1,36 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: dim_customer
+  description: Kunden-Dimension historisieren (SCD Typ 2) – neue Versionen anhängen, alte schließen
+parameters:
+  - {name: RUN_DATE, type: date, required: true}
+components:
+  src:
+    type: input_table
+    params: {connection: pilot, table: pilot.stg_customer, schema: customer_src}
+  dim:
+    type: input_table
+    params: {connection: pilot, table: pilot.dim_customer, schema: dim_customer}
+  hist:
+    type: scd_type2
+    params:
+      key: [customer_id]
+      compare: [name, email, city]
+      effective_date: "${RUN_DATE}"
+      close_missing: true
+  stamp:
+    type: audit_columns
+    params: {output_schema: dim_customer, run_id_field: run_id}
+  insert:
+    type: output_table
+    params: {connection: pilot, table: pilot.dim_customer, mode: append, create: false}
+  expire:
+    type: output_table
+    params: {connection: pilot, table: pilot.dim_customer, mode: upsert, key: [sk], create: false}
+flows:
+  - {from: src.out, to: hist.in}
+  - {from: dim.out, to: hist.current}
+  - {from: hist.insert, to: stamp.in}
+  - {from: stamp.out, to: insert.in}
+  - {from: hist.expire, to: expire.in}

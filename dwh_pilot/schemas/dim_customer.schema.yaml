@@ -1,0 +1,15 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: dim_customer}
+fields:
+  - {name: sk, type: int64, nullable: false}
+  - {name: customer_id, type: int64, nullable: false}
+  - {name: name, type: string}
+  - {name: email, type: string}
+  - {name: city, type: string}
+  - {name: valid_from, type: date}
+  - {name: valid_to, type: date}
+  - {name: is_current, type: bool}
+  - {name: run_id, type: string}
+keys:
+  primary: [sk]

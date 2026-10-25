@@ -1,0 +1,13 @@
+apiVersion: kyubi/v1
+kind: Job
+metadata: {name: stage_customers, description: Kunden-Schnappschuss prüfen und ins Staging laden}
+target: {graph: stage_customers}
+params: {RUN_DATE: "${instance.business_date}"}
+calendar: de_business_days
+start_time: "01:00"
+depends_on:
+  - file: "${env.KYUBI_PILOT_DATA}/in/customers_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+    condition: exists
+    timeout: 6h
+resources: {db_slots: 1}
+retries: {count: 1, delay: 5m}

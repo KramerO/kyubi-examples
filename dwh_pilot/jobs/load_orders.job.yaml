@@ -1,0 +1,15 @@
+apiVersion: kyubi/v1
+kind: Job
+metadata: {name: load_orders, description: Bestellungen anreichern und als Fakten laden}
+target: {graph: load_orders}
+params: {RUN_DATE: "${instance.business_date}"}
+calendar: de_business_days
+start_time: "01:30"
+depends_on:
+  - job: dim_customer
+  - file: "${env.KYUBI_PILOT_DATA}/in/orders_${fmt(RUN_DATE, '%Y%m%d')}.ok"
+    condition: exists
+    timeout: 6h
+resources: {db_slots: 1}
+retries: {count: 1, delay: 5m}
+timeout: 2h

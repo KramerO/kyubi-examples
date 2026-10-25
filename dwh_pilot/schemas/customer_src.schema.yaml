@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: customer_src}
+fields:
+  - {name: customer_id, type: int64, nullable: false}
+  - {name: name, type: string}
+  - {name: email, type: string}
+  - {name: city, type: string}

@@ -1,0 +1,10 @@
+apiVersion: kyubi/v1
+kind: Job
+metadata: {name: dim_customer, description: Kunden-Dimension historisieren (SCD2)}
+target: {graph: dim_customer}
+params: {RUN_DATE: "${instance.business_date}"}
+calendar: de_business_days
+start_time: "01:00"
+depends_on:
+  - job: stage_customers
+resources: {db_slots: 1}
