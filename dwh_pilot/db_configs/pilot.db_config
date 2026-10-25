@@ -1,5 +1,5 @@
 apiVersion: kyubi/v1
-kind: Connection
+kind: DbConfig
 metadata: {name: pilot, description: PostgreSQL aus scripts/db-up.sh (Schema pilot)}
 type: postgres
 options:
