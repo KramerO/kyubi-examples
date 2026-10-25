@@ -1,0 +1,13 @@
+apiVersion: kyubi/v1
+kind: Workspace
+metadata:
+  name: kyubi_examples
+  description: Beispiel-Workspace – Projekte nach Segmenten, gemeinsame Objekte in „shared“
+segments:
+  - {name: shared, description: "Gemeinsame Kalender, Verbindungen und Datasets"}
+  - {name: demo, description: Einstieg und Beispiele}
+  - {name: dwh, description: DWH-Strecken (Staging → Core → Mart)}
+projects:
+  - {path: shared, segment: shared}
+  - {path: basic, segment: demo}
+  - {path: dwh_pilot, segment: dwh}

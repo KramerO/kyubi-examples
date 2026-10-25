@@ -1,0 +1,5 @@
+apiVersion: kyubi/v1
+kind: Project
+metadata:
+  name: shared
+  description: Gemeinsam genutzte Objekte des Workspace (Kalender, Verbindungen, Datasets)
