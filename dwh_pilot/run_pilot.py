@@ -89,6 +89,8 @@ def checks(test: dict[str, str], days: list[str], data: Path) -> dict[str, Any]:
             )
             unmatched_file = data / "out" / f"orders_unmatched_{stamp}.csv"
             unmatched = pacsv.read_csv(unmatched_file).num_rows if unmatched_file.is_file() else 0
+            rejected_file = data / "out" / f"orders_rejected_{stamp}.csv"
+            rejected = pacsv.read_csv(rejected_file).num_rows if rejected_file.is_file() else 0
             facts, amount = conn.execute(
                 "SELECT count(*), coalesce(sum(amount), 0) FROM pilot.fact_order "
                 "WHERE order_date=%s",
@@ -103,7 +105,8 @@ def checks(test: dict[str, str], days: list[str], data: Path) -> dict[str, Any]:
                 "orders_source": source,
                 "facts": facts,
                 "unmatched": unmatched,
-                "facts_plus_unmatched_equals_source": facts + unmatched == source,
+                "rejected": rejected,
+                "facts_plus_unmatched_equals_source": facts + unmatched + rejected == source,
                 "mart_orders_equals_facts": mart_orders == facts,
                 "mart_revenue_equals_facts": revenue == amount,
                 "revenue": str(revenue),

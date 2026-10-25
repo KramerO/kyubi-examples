@@ -8,3 +8,8 @@ scheduler:
   max_parallel_jobs: 3
   timezone: Europe/Berlin
   new_day: "00:05"
+  notifications:
+    channels:
+      ops: {type: webhook, url: "${env.KYUBI_PILOT_HOOK}"}   # z. B. Teams-Webhook
+    rules:
+      - {events: [failed, instance_failed, sla_missed], channels: [ops]}
