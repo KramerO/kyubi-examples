@@ -10,3 +10,12 @@ scheduler:
   max_parallel_jobs: 4
   timezone: Europe/Berlin  # Startzeiten der Jobs und Tageswechsel (D-106)
   new_day: "00:05"
+  # Benachrichtigungen (D-107) – Zugangsdaten nur über Secrets/Umgebung:
+  # notifications:
+  #   channels:
+  #     teams: {type: webhook, url: "${secret('teams/webhook')}"}   # KYUBI_SECRET_TEAMS_WEBHOOK
+  #     ops_mail: {type: email, to: [ops@example.com], sender: kyubi@example.com,
+  #                host: smtp.example.com, user: kyubi, password: "${secret('smtp/password')}"}
+  #   rules:
+  #     - {events: [failed, instance_failed, sla_missed], channels: [teams, ops_mail]}
+  #     - {events: [new_day], channels: [teams]}
