@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: customers_snapshot, description: Kunden-Vollbestand des Tages (CSV aus dem CRM)}
+type: file
+path: "${env.KYUBI_PILOT_DATA}/in/customers_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+format: {type: delimited, header: true}
+schema: customer_src
+owner: team-crm
+tags: [quelle, crm, pii]

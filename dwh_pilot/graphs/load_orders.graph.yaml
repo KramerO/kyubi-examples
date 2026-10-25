@@ -5,7 +5,6 @@ metadata:
   description: Bestellungen des Tages (4 Dateien, 4 Prozesse) anreichern und als Fakten laden
 parameters:
   - {name: RUN_DATE, type: date, required: true}
-  - {name: IN_DIR, type: path, default: "${env.KYUBI_PILOT_DATA}/in"}
   - {name: OUT_DIR, type: path, default: "${env.KYUBI_PILOT_DATA}/out"}
 components:
   clean:
@@ -16,9 +15,7 @@ components:
   read:
     type: input_file
     params:
-      path: "${IN_DIR}/orders_${fmt(RUN_DATE, '%Y%m%d')}_*.csv"
-      schema: order_src
-      format: {type: delimited, header: true}
+      dataset: orders_daily
       reject_threshold: {max_ratio: 0.001}   # einzelne falsche Zeilen → Fehlerdatei
     layout: {partitions: 4}
   check:
@@ -30,7 +27,7 @@ components:
     layout: {partitions: 4}
   products:
     type: input_file
-    params: {path: "${IN_DIR}/products.parquet", schema: product, format: {type: parquet}}
+    params: {dataset: products}
   product:
     type: lookup
     params: {key: [product_id], output_schema: order_product}
@@ -50,7 +47,7 @@ components:
     layout: {partitions: 4}
   write:
     type: output_table
-    params: {connection: pilot, table: pilot.fact_order, mode: append, create: false}
+    params: {dataset: fact_order, mode: append, create: false}
   rejected:
     type: output_file
     params:

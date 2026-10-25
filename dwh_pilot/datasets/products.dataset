@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: products, description: Produktstamm (Parquet)}
+type: file
+path: "${env.KYUBI_PILOT_DATA}/in/products.parquet"
+format: {type: parquet}
+schema: product
+owner: team-shop
+tags: [stamm]

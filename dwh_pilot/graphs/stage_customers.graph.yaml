@@ -5,14 +5,10 @@ metadata:
   description: Kunden-Schnappschuss des Tages prüfen und ins Staging laden
 parameters:
   - {name: RUN_DATE, type: date, required: true}
-  - {name: IN_DIR, type: path, default: "${env.KYUBI_PILOT_DATA}/in"}
 components:
   read:
     type: input_file
-    params:
-      path: "${IN_DIR}/customers_${fmt(RUN_DATE, '%Y%m%d')}.csv"
-      schema: customer_src
-      format: {type: delimited, header: true}
+    params: {dataset: customers_snapshot}
   check:
     type: validate_records
     params:
@@ -22,7 +18,7 @@ components:
       reject_threshold: {max_ratio: 0.01}
   write:
     type: output_table
-    params: {connection: pilot, table: pilot.stg_customer, mode: truncate_insert, create: false}
+    params: {dataset: stg_customer, mode: truncate_insert, create: false}
 flows:
   - {from: read.out, to: check.in}
   - {from: check.out, to: write.in}

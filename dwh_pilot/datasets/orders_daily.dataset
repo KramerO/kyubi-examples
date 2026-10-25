@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: orders_daily, description: Bestellungen des Tages in 4 Teildateien (Shop-Export)}
+type: file
+path: "${env.KYUBI_PILOT_DATA}/in/orders_${fmt(RUN_DATE, '%Y%m%d')}_*.csv"
+format: {type: delimited, header: true}
+schema: order_src
+owner: team-shop
+tags: [quelle, shop]

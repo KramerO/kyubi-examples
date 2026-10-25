@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: mart_sales_day, description: Tagesumsatz je Kategorie und Stadt}
+type: table
+db_config: pilot
+table: pilot.mart_sales_day
+schema: sales_day
+owner: team-bi
+tags: [mart]

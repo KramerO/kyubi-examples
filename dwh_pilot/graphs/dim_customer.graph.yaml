@@ -8,7 +8,7 @@ parameters:
 components:
   src:
     type: input_table
-    params: {connection: pilot, table: pilot.stg_customer, schema: customer_src}
+    params: {dataset: stg_customer}
   dim:
     type: input_table
     params:
@@ -30,10 +30,10 @@ components:
     params: {output_schema: dim_customer, run_id_field: run_id}
   insert:
     type: output_table
-    params: {connection: pilot, table: pilot.dim_customer, mode: append, create: false}
+    params: {dataset: dim_customer, mode: append, create: false}
   expire:
     type: output_table
-    params: {connection: pilot, table: pilot.dim_customer, mode: upsert, key: [sk], create: false}
+    params: {dataset: dim_customer, mode: upsert, key: [sk], create: false}
 flows:
   - {from: src.out, to: hist.in}
   - {from: dim.out, to: hist.current}

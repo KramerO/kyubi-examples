@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: fact_order, description: Bestell-Fakten je Position mit Kunden-Surrogatschlüssel}
+type: table
+db_config: pilot
+table: pilot.fact_order
+schema: fact_order
+owner: team-dwh
+tags: [core, fakt]

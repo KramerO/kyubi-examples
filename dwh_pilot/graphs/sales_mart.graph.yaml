@@ -28,7 +28,7 @@ components:
       aggregations: {orders: count(), quantity: sum(quantity), revenue: sum(amount)}
   write:
     type: output_table
-    params: {connection: pilot, table: pilot.mart_sales_day, mode: append, create: false}
+    params: {dataset: mart_sales_day, mode: append, create: false}
 flows:
   - {from: facts.out, to: sum.in}
   - {from: sum.out, to: write.in}

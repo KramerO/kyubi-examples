@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: stg_customer, description: Staging – geprüfter Kunden-Schnappschuss}
+type: table
+db_config: pilot
+table: pilot.stg_customer
+schema: customer_src
+tags: [staging]
