@@ -11,7 +11,13 @@ components:
     params: {connection: pilot, table: pilot.stg_customer, schema: customer_src}
   dim:
     type: input_table
-    params: {connection: pilot, table: pilot.dim_customer, schema: dim_customer}
+    params:
+      connection: pilot
+      # aktuelle Versionen + höchster Schlüssel genügen – die Historie wächst täglich (Pilot O3)
+      query: >-
+        SELECT * FROM pilot.dim_customer
+        WHERE is_current OR sk = (SELECT max(sk) FROM pilot.dim_customer)
+      schema: dim_customer
   hist:
     type: scd_type2
     params:
