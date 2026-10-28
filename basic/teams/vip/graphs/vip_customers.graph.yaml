@@ -1,0 +1,44 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: vip_customers
+  description: Aktive Kunden ab VIP_THRESHOLD Umsatz – nutzt Komponenten und Schemas aus basic
+parameters:
+  - {name: RUN_DATE, type: date, required: true}
+  - {name: IN_DIR, type: path, default: "${DATA_ROOT}/in"}
+  - {name: OUT_DIR, type: path, default: "${DATA_ROOT}/out"}
+components:
+  read:
+    type: input_file
+    params:
+      path: "${IN_DIR}/customers_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+      schema: customer          # aus basic
+      format: semicolon_csv     # aus basic
+  active:
+    type: components/status_filter   # eigene Komponente von basic
+    params:
+      wanted: active
+  clean:
+    type: reformat
+    params:
+      output_schema: customer_clean
+      assign:
+        revenue: amount
+        region: "substr(zip, 0, 1)"
+  vips:
+    type: components/vip_split       # Python-Komponente von basic
+    params:
+      threshold: "${VIP_THRESHOLD}"
+  write_vip:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/team_vip_${fmt(RUN_DATE, '%Y%m%d')}.parquet"
+      format: {type: parquet}
+  rest:
+    type: trash
+flows:
+  - {from: read.out, to: active.in}
+  - {from: active.out, to: clean.in}
+  - {from: clean.out, to: vips.in}
+  - {from: vips.vip, to: write_vip.in}
+  - {from: vips.rest, to: rest.in}

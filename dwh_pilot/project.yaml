@@ -3,7 +3,7 @@ kind: Project
 metadata:
   name: dwh_pilot
   description: Pilot – synthetisches DWH (Staging → SCD2-Dimension → Fakten → Mart) als Jobnetz
-uses: [shared]   # Kalender aus dem Workspace-Projekt shared (D-109)
+include: [../shared]   # Kalender, db_config und Datasets aus der Sandbox shared (D-124)
 scheduler:
   resources: {db_slots: 2}
   max_parallel_jobs: 3

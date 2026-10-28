@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: Project
+metadata:
+  name: vip
+  description: Kind-Sandbox in basic – erbt Schemas, Formate, Profil, Layout, Code und Komponenten
+# Kein include nötig: als Unterordner mit project.yaml bindet die Sandbox basic automatisch ein
+# (D-124). Eigene Werte überschreiben die von basic – hier die VIP-Schwelle.
+parameters:
+  VIP_THRESHOLD: 5000
