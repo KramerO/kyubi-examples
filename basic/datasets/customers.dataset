@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: customers, description: CRM-Export der Kunden je Stichtag}
+type: file
+path: "${env.KYUBI_EXAMPLE_DATA}/in/customers_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+format: semicolon_csv
+schema: customer
+owner: team-crm
+tags: [quelle, crm]

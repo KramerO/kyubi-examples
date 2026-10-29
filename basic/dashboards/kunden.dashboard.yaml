@@ -1,0 +1,43 @@
+apiVersion: kyubi/v1
+kind: Dashboard
+metadata: {name: kunden, description: Kundenüberblick}
+# Standardwerte für ${…} im Dataset-Pfad; der Filter „Stichtag“ überschreibt sie
+params: {RUN_DATE: "2026-10-17"}
+filters:
+  - {name: stichtag, label: Stichtag, param: RUN_DATE}
+  - {name: status, label: Status, field: status}
+widgets:
+  - id: anzahl
+    title: Kunden gesamt
+    type: kpi
+    query: {dataset: customers, measures: [{agg: count}]}
+    layout: {x: 0, y: 0, w: 3, h: 2}
+  - id: umsatz
+    title: Umsatz gesamt
+    type: kpi
+    query: {dataset: customers, measures: [{agg: sum, field: amount}]}
+    layout: {x: 0, y: 2, w: 3, h: 2}
+  - id: je_status
+    title: Kunden je Status
+    type: bar
+    query: {dataset: customers, dimensions: [{field: status}], measures: [{agg: count}]}
+    layout: {x: 3, y: 0, w: 5, h: 4}
+  - id: je_monat
+    title: Neukunden je Monat
+    type: line
+    query:
+      dataset: customers
+      dimensions: [{field: created_at, grain: month}]
+      measures: [{agg: count}]
+      order: [{field: created_at_month}]
+    layout: {x: 8, y: 0, w: 4, h: 4}
+  - id: je_ort
+    title: Umsatz je Ort
+    type: table
+    query:
+      dataset: customers
+      dimensions: [{field: city}]
+      measures: [{agg: count}, {agg: sum, field: amount}]
+      order: [{field: sum_amount, desc: true}]
+      limit: 20
+    layout: {x: 0, y: 4, w: 12, h: 4}
