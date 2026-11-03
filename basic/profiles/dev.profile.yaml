@@ -6,4 +6,5 @@ metadata:
 layout: etl_default
 allow_agent_runs: true
 parameters:
-  DATA_ROOT: "${env.KYUBI_EXAMPLE_DATA}"
+  # KYUBI_EXAMPLE_DATA wenn gesetzt, sonst projekt-relativ ${ROOT}/data.
+  DATA_ROOT: "${env_or('KYUBI_EXAMPLE_DATA', ROOT + '/data')}"
