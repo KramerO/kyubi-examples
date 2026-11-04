@@ -1,0 +1,25 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: sales_mart_dbt
+  description: Parallelbetrieb (M21) – sales_mart in dbt rechnen und mit dem Kyubi-Ergebnis abgleichen
+parameters:
+  - {name: RUN_DATE, type: date, required: true}
+components:
+  run:
+    type: dbt_run
+    description: vorher einmal (und nach jeder Änderung) kyubi dbt export sales_mart
+    params:
+      project_dir: "${sandbox.ROOT}/dbt"
+      vars: "{RUN_DATE: '${RUN_DATE}'}"
+      select: mart_sales_day
+  check:
+    type: dbt_compare
+    params:
+      connection: pilot
+      kyubi_table: pilot.mart_sales_day
+      dbt_table: kyubi_dbt.mart_sales_day
+      where: "order_date = '${RUN_DATE}'"
+phases:
+  - [run]
+  - [check]
