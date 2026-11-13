@@ -1,0 +1,17 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: uniprot_raw, description: 'UniProt-REST (TSV mit Kopfzeile) – alles Text (M26)'}
+fields:
+  - {name: fetched_at, type: string}
+  - {name: taxon_id, type: string}
+  - {name: accession, type: string}
+  - {name: entry_name, type: string}
+  - {name: protein_name, type: string}
+  - {name: gene_primary, type: string}
+  - {name: organism_name, type: string}
+  - {name: organism_id, type: string}
+  - {name: length, type: string}
+  - {name: mass, type: string}
+  - {name: function_text, type: string}
+  - {name: domains, type: string}
+  - {name: reviewed, type: string}

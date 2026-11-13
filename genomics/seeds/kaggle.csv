@@ -1,0 +1,5 @@
+dataset,file,enabled,note
+paultimothymooney/coronavirus-genome-sequence,MN908947.fna,true,Zweiter Abzug desselben SARS-CoV-2-Genoms – Prüfsumme muss zu NCBI passen
+zusmani/mygenome,,true,Genotypen eines einzelnen Menschen (SNP je rsid)
+samiraalipour/genomics-of-drug-sensitivity-in-cancer-gdsc,,true,Arzneimittelempfindlichkeit von Krebszelllinien (GDSC)
+aliabedimadiseh/grch38-human-genome-dna,,false,Menschliches Referenzgenom – rund 3 GB; bewusst aus

@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata: {name: hub_sequence_map, description: 'HUB Sequenz – Accession ohne Versionsziffer.'}
+input: {schema: stage_sequence_s}
+output: {schema: hub_sequence_s}
+fields:
+  hk_sequence: "sha256(rec.accession_base)"
+  accession_base: rec.accession_base

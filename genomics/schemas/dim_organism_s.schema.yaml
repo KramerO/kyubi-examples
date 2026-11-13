@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: dim_organism_s, description: 'Mart – Dimension Organismus'}
+fields:
+  - {name: organism_id, type: int64, nullable: false}
+  - {name: organism_name, type: string, max_length: 200}
+keys:
+  primary: [organism_id]

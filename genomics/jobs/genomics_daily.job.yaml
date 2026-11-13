@@ -1,0 +1,11 @@
+apiVersion: kyubi/v1
+kind: Job
+metadata:
+  name: genomics_daily
+  description: >-
+    Täglich 05:00 – die öffentlichen Quellen sind dann ruhig, und UniProt veröffentlicht
+    seine Aktualisierungen nachts (M26).
+target: {plan: genomics_daily}
+start_time: "05:00"
+resources: {db_slots: 1}
+retries: {count: 2, delay: 30m}

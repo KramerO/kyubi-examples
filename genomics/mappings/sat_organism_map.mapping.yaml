@@ -1,0 +1,11 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata: {name: sat_organism_map, description: 'SAT Organismus – der Name kommt aus UniProt.'}
+input: {schema: stage_protein_s}
+output: {schema: sat_organism_s}
+filter: "not is_null(rec.organism_id)"
+fields:
+  hk_organism: "sha256(rec.organism_id)"
+  organism_id: rec.organism_id
+  organism_name: rec.organism_name
+  record_source: "'uniprot/swissprot'"

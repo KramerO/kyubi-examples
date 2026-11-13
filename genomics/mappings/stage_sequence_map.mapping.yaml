@@ -1,0 +1,31 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata:
+  name: stage_sequence_map
+  description: >-
+    FASTA-Kennzahlen typisieren und die **Accession ohne Version** bilden: `MN908947.3`
+    und `MN908947.2` sind dasselbe Genom in zwei Fassungen, und als Hub-Schlüssel taugt
+    nur der Teil ohne Versionsziffer (M26).
+input: {schema: sequence_raw}
+output: {schema: stage_sequence_in_s}
+reject_if:
+  - {when: "is_null(rec.accession) or rec.accession == ''", message: Accession fehlt}
+  - {when: "numbers.to_int(rec.length) == 0", message: Sequenz ohne Basen}
+variables:
+  fetched: "dates.parse_timestamp(rec.fetched_at, '%Y-%m-%d %H:%M:%S')"
+  bases: "numbers.to_int(rec.length)"
+  gc: "numbers.to_int(rec.gc_count)"
+fields:
+  business_date: "dates.to_date(fetched)"
+  accession: rec.accession
+  accession_base: "strings.upper(strings.split_part(rec.accession, '.', 1))"
+  source: rec.source
+  organism_id: "numbers.to_int(rec.organism_taxon)"
+  description: "strings.left(rec.description, 400)"
+  bases: bases
+  gc_count: gc
+  n_count: "numbers.to_int(rec.n_count)"
+  gc_percent: "numbers.round_half_up(numbers.safe_div(gc * 100.0, bases), 2)"
+  sha256: rec.sha256
+  head: "strings.left(rec.head, 64)"
+  fetched_at: fetched

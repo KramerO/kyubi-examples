@@ -1,0 +1,11 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: protein_rollup_s, description: 'Zwischenschritt – Kennzahlen je Organismus aus den Proteinen'}
+fields:
+  - {name: business_date, type: date, nullable: false}
+  - {name: organism_id, type: int64, nullable: false}
+  - {name: proteins, type: int64}
+  - {name: aa_total, type: int64}
+  - {name: aa_mean, type: float64}
+  - {name: longest_protein, type: int64}
+  - {name: genes, type: int64}

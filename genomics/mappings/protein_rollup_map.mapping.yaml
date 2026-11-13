@@ -1,0 +1,13 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata: {name: protein_rollup_map, description: 'Mart – Kennzahlen je Organismus in die Faktzeile.'}
+input: {schema: protein_rollup_s}
+output: {schema: fact_organism_s}
+fields:
+  business_date: rec.business_date
+  organism_id: rec.organism_id
+  proteins: rec.proteins
+  aa_total: rec.aa_total
+  aa_mean: "numbers.round_half_up(rec.aa_mean, 1)"
+  longest_protein: rec.longest_protein
+  genes: rec.genes

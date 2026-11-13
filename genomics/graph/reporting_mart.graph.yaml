@@ -1,0 +1,74 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: reporting_mart
+  description: >-
+    Mart (M26): je Organismus die Kennzahlen seiner Proteine, je Sequenz die Kennzahlen des
+    Genoms – und die Dimension Organismus, die beide verbindet. Der Mart ist die Stelle, an
+    der die zwei Quellen nebeneinander lesbar werden.
+parameters:
+  - {name: RUN_DATE, type: date, default: "${today()}"}
+components:
+  read_proteins:
+    type: input_table
+    params:
+      connection: genomics
+      query: "SELECT * FROM gen_stage.stage_protein WHERE business_date = '${RUN_DATE}'"
+      schema: stage_protein_s
+  rollup_proteins:
+    type: rollup
+    params:
+      key: [business_date, organism_id]
+      output_schema: protein_rollup_s
+      aggregations:
+        proteins: "count()"
+        aa_total: "sum(aa_length)"
+        aa_mean: "mean(aa_length)"
+        longest_protein: "max(aa_length)"
+        genes: "count_distinct(gene_primary)"
+  fact_organisms:
+    type: reformat
+    params: {mapping: protein_rollup_map}
+  write_fact_organism:
+    type: output_table
+    params: {dataset: fact_organism, mode: upsert, key: [business_date, organism_id], create: true}
+  read_organism_sat:
+    type: input_table
+    params:
+      connection: genomics
+      # As-of lesen: die am Fachtag gültige Fassung, nicht „heute offen" (WP-23.8 gelernt)
+      query: >-
+        SELECT * FROM gen_vault.sat_organism
+        WHERE business_valid_from <= '${RUN_DATE}' AND business_valid_to > '${RUN_DATE}'
+          AND tech_valid_to = TIMESTAMP '9999-12-31 00:00:00'
+      schema: sat_organism_s
+  dim_organisms:
+    type: reformat
+    params: {mapping: dim_organism_map}
+  dedup_dim:
+    type: dedup
+    params: {key: [organism_id], keep: first}
+  write_dim_organism:
+    type: output_table
+    params: {dataset: dim_organism, mode: upsert, key: [organism_id], create: true}
+  read_sequences:
+    type: input_table
+    params:
+      connection: genomics
+      query: "SELECT * FROM gen_stage.stage_sequence WHERE business_date = '${RUN_DATE}'"
+      schema: stage_sequence_s
+  fact_sequences:
+    type: reformat
+    params: {mapping: fact_sequence_map}
+  write_fact_sequence:
+    type: output_table
+    params: {dataset: fact_sequence, mode: upsert, key: [business_date, accession_base, source], create: true}
+flows:
+  - {from: read_proteins.out, to: rollup_proteins.in}
+  - {from: rollup_proteins.out, to: fact_organisms.in}
+  - {from: fact_organisms.out, to: write_fact_organism.in}
+  - {from: read_organism_sat.out, to: dim_organisms.in}
+  - {from: dim_organisms.out, to: dedup_dim.in}
+  - {from: dedup_dim.out, to: write_dim_organism.in}
+  - {from: read_sequences.out, to: fact_sequences.in}
+  - {from: fact_sequences.out, to: write_fact_sequence.in}

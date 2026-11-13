@@ -1,0 +1,10 @@
+apiVersion: kyubi/v1
+kind: DbConfig
+metadata: {name: genomics, description: 'PostgreSQL aus scripts/db-up.sh – Schemas gen_stage, gen_vault, gen_mart'}
+type: postgres
+options:
+  host: 127.0.0.1
+  port: "${env_or('GENOMICS_DB_PORT', 55432)}"
+  database: kyubi_test
+  user: kyubi
+  password: "${secret('genomics/password')}"   # KYUBI_SECRET_GENOMICS_PASSWORD

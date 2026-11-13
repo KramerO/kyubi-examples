@@ -7,8 +7,10 @@ segments:
   - {name: shared, description: "Gemeinsame Kalender, Verbindungen und Datasets"}
   - {name: demo, description: Einstieg und Beispiele}
   - {name: dwh, description: DWH-Strecken (Staging → Core → Mart)}
+  - {name: bio, description: "Genomdaten: Proteine und Sequenzen aus öffentlichen Quellen"}
 projects:
   - {path: shared, segment: shared}
   - {path: basic, segment: demo}
   - {path: basic/teams/vip, segment: demo}   # Kind-Sandbox: erbt von basic (D-124)
   - {path: dwh_pilot, segment: dwh}
+  - {path: genomics, segment: bio}

@@ -1,0 +1,19 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata:
+  name: sat_sequence_s
+  description: >-
+    RawVault – SAT Sequenz je Quelle: Länge, GC-Anteil, unbestimmte Basen und die
+    Prüfsumme über die Basen. Die Prüfsumme ist der Beweis, dass zwei Quellen wirklich
+    dasselbe Genom liefern – die Nummer allein ist es nicht (bitemporal).
+fields:
+  - {name: hk_sequence, type: string, nullable: false, max_length: 64}
+  - {name: accession, type: string, nullable: false, max_length: 32}
+  - {name: source, type: string, nullable: false, max_length: 16}
+  - {name: description, type: string, max_length: 400}
+  - {name: bases, type: int64}
+  - {name: gc_count, type: int64}
+  - {name: n_count, type: int64}
+  - {name: gc_percent, type: decimal, precision: 5, scale: 2}
+  - {name: sha256, type: string, max_length: 64}
+  - {name: record_source, type: string, max_length: 32}

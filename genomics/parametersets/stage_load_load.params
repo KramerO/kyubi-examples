@@ -1,0 +1,7 @@
+apiVersion: kyubi/v1
+kind: ParameterSet
+metadata:
+  name: stage_load_load
+  description: Graph stage_load für einen Fachtag – RUN_DATE liefert der Plan.
+graph: stage_load
+parameters: {}

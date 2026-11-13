@@ -1,0 +1,7 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: hub_gene_s, description: 'RawVault – HUB Gen (Geschäftsschlüssel: Gensymbol je Organismus)'}
+fields:
+  - {name: hk_gene, type: string, nullable: false, max_length: 64}
+  - {name: organism_id, type: int64, nullable: false}
+  - {name: gene_symbol, type: string, nullable: false, max_length: 60}

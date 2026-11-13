@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: sat_sequence, description: 'RawVault – SAT Sequenz je Quelle (bitemporal)'}
+type: table
+db_config: genomics
+table: gen_vault.sat_sequence
+schema: sat_sequence_s
+tags: [genomics]

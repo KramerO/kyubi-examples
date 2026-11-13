@@ -1,0 +1,6 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: hub_protein_s, description: 'RawVault – HUB Protein (Geschäftsschlüssel: UniProt-Accession)'}
+fields:
+  - {name: hk_protein, type: string, nullable: false, max_length: 64}
+  - {name: accession, type: string, nullable: false, max_length: 20}

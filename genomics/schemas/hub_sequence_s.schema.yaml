@@ -1,0 +1,11 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata:
+  name: hub_sequence_s
+  description: >-
+    RawVault – HUB Sequenz. Geschäftsschlüssel ist die Accession **ohne Version**
+    (`MN908947.3` → `MN908947`): Dasselbe Genom kommt aus NCBI, aus ENA und aus einem
+    Kaggle-Abzug, und die Versionsziffer unterscheidet sich zwischen den Abzügen (M26).
+fields:
+  - {name: hk_sequence, type: string, nullable: false, max_length: 64}
+  - {name: accession_base, type: string, nullable: false, max_length: 32}

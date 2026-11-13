@@ -1,0 +1,152 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: raw_vault
+  description: >-
+    RawVault (Data Vault 2.0) aus beiden Quellen (M26). Die Proteine aus UniProt und die
+    Genome aus NCBI/ENA treffen sich am **HUB Organismus** – derselbe Geschäftsschlüssel
+    (Taxon-Nummer), zwei Quellen. Die Sequenzen treffen sich untereinander am HUB Sequenz:
+    Accession ohne Version, und die Prüfsumme im Satelliten sagt, ob es wirklich dasselbe
+    Genom ist.
+parameters:
+  - {name: RUN_DATE, type: date, default: "${today()}"}
+components:
+  read_proteins:
+    type: input_table
+    params:
+      connection: genomics
+      query: "SELECT * FROM gen_stage.stage_protein WHERE business_date = '${RUN_DATE}'"
+      schema: stage_protein_s
+  read_sequences:
+    type: input_table
+    params:
+      connection: genomics
+      query: "SELECT * FROM gen_stage.stage_sequence WHERE business_date = '${RUN_DATE}'"
+      schema: stage_sequence_s
+  rep_proteins: {type: replicate}
+  rep_sequences: {type: replicate}
+  # ---- Protein
+  hub_proteins:
+    type: reformat
+    params: {mapping: hub_protein_map}
+  write_hub_protein:
+    type: output_table
+    params: {dataset: hub_protein, mode: upsert, key: [hk_protein], create: true}
+  sat_proteins:
+    type: reformat
+    params: {mapping: sat_protein_map}
+  write_sat_protein:
+    type: write_bitemporal_table
+    params: {dataset: sat_protein, business_key: [hk_protein], effective_date: "${RUN_DATE}", close_missing: false, create: true}
+  # ---- Organismus (beide Quellen)
+  organism_from_protein:
+    type: reformat
+    params: {mapping: hub_organism_protein_map}
+  organism_from_sequence:
+    type: reformat
+    params: {mapping: hub_organism_sequence_map}
+  organisms_all: {type: concatenate}
+  dedup_organisms:
+    type: dedup
+    params: {key: [hk_organism], keep: first}
+  write_hub_organism:
+    type: output_table
+    params: {dataset: hub_organism, mode: upsert, key: [hk_organism], create: true}
+  sat_organisms:
+    type: reformat
+    params: {mapping: sat_organism_map}
+  dedup_sat_organisms:
+    type: dedup
+    params: {key: [hk_organism], keep: first}
+  write_sat_organism:
+    type: write_bitemporal_table
+    params: {dataset: sat_organism, business_key: [hk_organism], effective_date: "${RUN_DATE}", close_missing: false, create: true}
+  link_protein_organism:
+    type: reformat
+    params: {mapping: link_protein_organism_map}
+  write_link_protein_organism:
+    type: output_table
+    params: {dataset: link_protein_organism, mode: upsert, key: [hk_protein_organism], create: true}
+  # ---- Gen
+  genes:
+    type: reformat
+    params: {mapping: hub_gene_map}
+  dedup_genes:
+    type: dedup
+    params: {key: [hk_gene], keep: first}
+  write_hub_gene:
+    type: output_table
+    params: {dataset: hub_gene, mode: upsert, key: [hk_gene], create: true}
+  link_protein_gene:
+    type: reformat
+    params: {mapping: link_protein_gene_map}
+  dedup_link_gene:
+    type: dedup
+    params: {key: [hk_protein_gene], keep: first}
+  write_link_protein_gene:
+    type: output_table
+    params: {dataset: link_protein_gene, mode: upsert, key: [hk_protein_gene], create: true}
+  # ---- Sequenz
+  hub_sequences:
+    type: reformat
+    params: {mapping: hub_sequence_map}
+  dedup_sequences:
+    type: dedup
+    params: {key: [hk_sequence], keep: first}
+  write_hub_sequence:
+    type: output_table
+    params: {dataset: hub_sequence, mode: upsert, key: [hk_sequence], create: true}
+  sat_sequences:
+    type: reformat
+    params: {mapping: sat_sequence_map}
+  dedup_sat_sequences:
+    # Je Quelle eine Zeile – der bitemporale Schreiber verlangt den Fachschlüssel eindeutig,
+    # deshalb gewinnt hier die erste Quelle des Tages. Alle Quellen nebeneinander zeigt der
+    # Mart (fact_sequence).
+    type: dedup
+    params: {key: [hk_sequence], keep: first}
+  write_sat_sequence:
+    type: write_bitemporal_table
+    params: {dataset: sat_sequence, business_key: [hk_sequence], effective_date: "${RUN_DATE}", close_missing: false, create: true}
+  link_sequence_organism:
+    type: reformat
+    params: {mapping: link_sequence_organism_map}
+  dedup_link_sequence:
+    type: dedup
+    params: {key: [hk_sequence_organism], keep: first}
+  write_link_sequence_organism:
+    type: output_table
+    params: {dataset: link_sequence_organism, mode: upsert, key: [hk_sequence_organism], create: true}
+flows:
+  - {from: read_proteins.out, to: rep_proteins.in}
+  - {from: rep_proteins.out, to: hub_proteins.in}
+  - {from: hub_proteins.out, to: write_hub_protein.in}
+  - {from: rep_proteins.out, to: sat_proteins.in}
+  - {from: sat_proteins.out, to: write_sat_protein.in}
+  - {from: rep_proteins.out, to: organism_from_protein.in}
+  - {from: organism_from_protein.out, to: organisms_all.in}
+  - {from: rep_proteins.out, to: sat_organisms.in}
+  - {from: sat_organisms.out, to: dedup_sat_organisms.in}
+  - {from: dedup_sat_organisms.out, to: write_sat_organism.in}
+  - {from: rep_proteins.out, to: link_protein_organism.in}
+  - {from: link_protein_organism.out, to: write_link_protein_organism.in}
+  - {from: rep_proteins.out, to: genes.in}
+  - {from: genes.out, to: dedup_genes.in}
+  - {from: dedup_genes.out, to: write_hub_gene.in}
+  - {from: rep_proteins.out, to: link_protein_gene.in}
+  - {from: link_protein_gene.out, to: dedup_link_gene.in}
+  - {from: dedup_link_gene.out, to: write_link_protein_gene.in}
+  - {from: read_sequences.out, to: rep_sequences.in}
+  - {from: rep_sequences.out, to: organism_from_sequence.in}
+  - {from: organism_from_sequence.out, to: organisms_all.in}
+  - {from: organisms_all.out, to: dedup_organisms.in}
+  - {from: dedup_organisms.out, to: write_hub_organism.in}
+  - {from: rep_sequences.out, to: hub_sequences.in}
+  - {from: hub_sequences.out, to: dedup_sequences.in}
+  - {from: dedup_sequences.out, to: write_hub_sequence.in}
+  - {from: rep_sequences.out, to: sat_sequences.in}
+  - {from: sat_sequences.out, to: dedup_sat_sequences.in}
+  - {from: dedup_sat_sequences.out, to: write_sat_sequence.in}
+  - {from: rep_sequences.out, to: link_sequence_organism.in}
+  - {from: link_sequence_organism.out, to: dedup_link_sequence.in}
+  - {from: dedup_link_sequence.out, to: write_link_sequence_organism.in}

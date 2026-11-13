@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: stage_sequence, description: 'STAGE – Genomsequenzen (NCBI/ENA)'}
+type: table
+db_config: genomics
+table: gen_stage.stage_sequence
+schema: stage_sequence_s
+tags: [genomics]

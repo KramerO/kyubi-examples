@@ -1,0 +1,16 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata: {name: sat_protein_map, description: 'SAT Protein – die beschreibenden Felder aus SwissProt.'}
+input: {schema: stage_protein_s}
+output: {schema: sat_protein_s}
+fields:
+  hk_protein: "sha256(rec.accession)"
+  accession: rec.accession
+  entry_name: rec.entry_name
+  protein_name: rec.protein_name
+  gene_primary: rec.gene_primary
+  aa_length: rec.aa_length
+  mass_da: rec.mass_da
+  has_function_text: rec.has_function_text
+  domain_count: rec.domain_count
+  record_source: "'uniprot/swissprot'"

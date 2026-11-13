@@ -1,0 +1,15 @@
+apiVersion: kyubi/v1
+kind: Project
+metadata:
+  name: genomics
+  description: >-
+    Zweiter Datenstrang: Proteine aus UniProt/SwissProt und Genomsequenzen aus NCBI/ENA.
+    Beide Quellen treffen sich im RawVault am Organismus – und dieselbe Sequenz kann aus
+    zwei Quellen kommen (NCBI und Kaggle) und muss derselbe Hub sein (M26).
+parameters:
+  LANDING_ROOT: "${ROOT}/data/landing"
+scheduler:
+  resources: {db_slots: 2}
+  max_parallel_jobs: 2
+  timezone: Europe/Berlin
+  new_day: "00:05"

@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: hub_protein, description: 'RawVault – HUB Protein'}
+type: table
+db_config: genomics
+table: gen_vault.hub_protein
+schema: hub_protein_s
+tags: [genomics]

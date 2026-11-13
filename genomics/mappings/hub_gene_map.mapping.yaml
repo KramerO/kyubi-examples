@@ -1,0 +1,15 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata:
+  name: hub_gene_map
+  description: >-
+    HUB Gen. Der Geschäftsschlüssel ist das Gensymbol **je Organismus**: `S` heißt beim
+    Coronavirus Spike und bei einem Bakterium etwas ganz anderes – ohne den Organismus im
+    Schlüssel liefen sie zusammen.
+input: {schema: stage_protein_s}
+output: {schema: hub_gene_s}
+filter: "not is_null(rec.gene_primary) and rec.gene_primary != '' and not is_null(rec.organism_id)"
+fields:
+  hk_gene: "sha256(rec.organism_id, rec.gene_primary)"
+  organism_id: rec.organism_id
+  gene_symbol: rec.gene_primary

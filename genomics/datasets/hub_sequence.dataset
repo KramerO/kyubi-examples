@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: hub_sequence, description: 'RawVault – HUB Sequenz'}
+type: table
+db_config: genomics
+table: gen_vault.hub_sequence
+schema: hub_sequence_s
+tags: [genomics]

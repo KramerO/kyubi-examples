@@ -1,0 +1,14 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: sat_protein_s, description: 'RawVault – SAT Protein (Name, Länge, Masse; bitemporal)'}
+fields:
+  - {name: hk_protein, type: string, nullable: false, max_length: 64}
+  - {name: accession, type: string, nullable: false, max_length: 20}
+  - {name: entry_name, type: string, max_length: 40}
+  - {name: protein_name, type: string, max_length: 400}
+  - {name: gene_primary, type: string, max_length: 60}
+  - {name: aa_length, type: int64}
+  - {name: mass_da, type: int64}
+  - {name: has_function_text, type: bool}
+  - {name: domain_count, type: int32}
+  - {name: record_source, type: string, max_length: 32}

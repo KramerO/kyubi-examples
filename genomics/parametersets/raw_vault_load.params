@@ -1,0 +1,7 @@
+apiVersion: kyubi/v1
+kind: ParameterSet
+metadata:
+  name: raw_vault_load
+  description: Graph raw_vault für einen Fachtag – RUN_DATE liefert der Plan.
+graph: raw_vault
+parameters: {}

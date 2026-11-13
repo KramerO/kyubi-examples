@@ -1,0 +1,19 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata:
+  name: fact_sequence_map
+  description: >-
+    Mart – je Sequenz und Quelle eine Zeile. Hier stehen die Quellen nebeneinander: Kommt
+    dasselbe Genom aus NCBI und aus Kaggle, sind es zwei Zeilen mit derselben
+    `accession_base` – und wenn alles stimmt, mit denselben Zahlen.
+input: {schema: stage_sequence_s}
+output: {schema: fact_sequence_s}
+fields:
+  business_date: rec.business_date
+  accession_base: rec.accession_base
+  organism_id: rec.organism_id
+  source: rec.source
+  description: rec.description
+  bases: rec.bases
+  gc_percent: rec.gc_percent
+  n_count: rec.n_count

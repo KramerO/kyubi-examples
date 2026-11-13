@@ -1,0 +1,17 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata:
+  name: fact_organism_s
+  description: >-
+    Mart – je Organismus und Fachtag: was beide Quellen zusammen über ihn sagen.
+    Proteine aus UniProt, Genome aus NCBI/ENA – erst im Mart stehen sie nebeneinander.
+fields:
+  - {name: business_date, type: date, nullable: false}
+  - {name: organism_id, type: int64, nullable: false}
+  - {name: proteins, type: int64}
+  - {name: aa_total, type: int64}
+  - {name: aa_mean, type: decimal, precision: 10, scale: 1}
+  - {name: longest_protein, type: int64}
+  - {name: genes, type: int64}
+keys:
+  primary: [business_date, organism_id]

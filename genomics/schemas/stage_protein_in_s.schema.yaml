@@ -1,0 +1,16 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: stage_protein_in_s, description: 'STAGE – geprüfte Proteine, typisiert (vor audit_columns)'}
+fields:
+  - {name: business_date, type: date, nullable: false}
+  - {name: accession, type: string, nullable: false, max_length: 20}
+  - {name: entry_name, type: string, max_length: 40}
+  - {name: protein_name, type: string, max_length: 400}
+  - {name: gene_primary, type: string, max_length: 60}
+  - {name: organism_name, type: string, max_length: 200}
+  - {name: organism_id, type: int64}
+  - {name: aa_length, type: int64}
+  - {name: mass_da, type: int64}
+  - {name: has_function_text, type: bool}
+  - {name: domain_count, type: int32}
+  - {name: fetched_at, type: timestamp, nullable: false}
