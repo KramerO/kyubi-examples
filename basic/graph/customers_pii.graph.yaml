@@ -1,0 +1,34 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: customers_pii
+  description: Kundenstamm laden und die PII-Felder verschlüsseln (KyubiKeyStore, M24)
+parameters:
+  - {name: RUN_DATE, type: date, required: true}
+  - {name: IN_DIR, type: path, default: "${DATA_ROOT}/in"}
+  - {name: OUT_DIR, type: path, default: "${DATA_ROOT}/out"}
+components:
+  read:
+    type: input_file
+    params:
+      path: "${IN_DIR}/customers_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+      schema: customer
+      format: semicolon_csv
+  # Je Datensatz ein eigener Schlüssel im Bund 'customer_pii'. Welche Felder verschlüsselt
+  # werden, sagt das Schema (sensitive: true) – hier name und birth_date.
+  protect:
+    type: encrypt
+    params:
+      keyring: customer_pii
+      key: [customer_id]
+      fields: [name, birth_date]
+      output_schema: customer_pii
+  write:
+    type: output_file
+    params:
+      path: "${OUT_DIR}/customers_pii_${fmt(RUN_DATE, '%Y%m%d')}.csv"
+      # Nicht semicolon_csv: dort ist birth_date ein Datum, verschlüsselt ist es Text
+      format: {type: delimited, delimiter: ";", header: true}
+flows:
+  - {from: read.out, to: protect.in}
+  - {from: protect.out, to: write.in}
