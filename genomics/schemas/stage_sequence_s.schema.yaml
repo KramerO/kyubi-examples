@@ -1,0 +1,18 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: stage_sequence_s, description: 'STAGE – Genomsequenzen des Tages'}
+fields:
+  - {name: business_date, type: date, nullable: false}
+  - {name: accession, type: string, nullable: false, max_length: 32}
+  - {name: accession_base, type: string, nullable: false, max_length: 32}
+  - {name: source, type: string, max_length: 16}
+  - {name: organism_id, type: int64}
+  - {name: description, type: string, max_length: 400}
+  - {name: bases, type: int64}
+  - {name: gc_count, type: int64}
+  - {name: n_count, type: int64}
+  - {name: gc_percent, type: decimal, precision: 5, scale: 2}
+  - {name: sha256, type: string, nullable: false, max_length: 64}
+  - {name: head, type: string, max_length: 64}
+  - {name: fetched_at, type: timestamp, nullable: false}
+  - {name: load_ts, type: timestamp, nullable: false}

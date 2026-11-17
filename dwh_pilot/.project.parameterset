@@ -9,8 +9,11 @@ scheduler:
   max_parallel_jobs: 3
   timezone: Europe/Berlin
   new_day: "00:05"
-  notifications:
-    channels:
-      ops: {type: webhook, url: "${env.KYUBI_PILOT_HOOK}"}   # z. B. Teams-Webhook
-    rules:
-      - {events: [failed, instance_failed, sla_missed], channels: [ops]}
+  # Benachrichtigungen: lokal aus, weil jede Zustellung an einen nicht erreichbaren
+  # Webhook als Fehler im Control Center steht. Zum Einschalten KYUBI_PILOT_HOOK auf einen
+  # echten Teams-/Slack-/Mattermost-Webhook setzen und die vier Zeilen einkommentieren.
+  # notifications:
+  #   channels:
+  #     ops: {type: webhook, url: "${env.KYUBI_PILOT_HOOK}"}
+  #   rules:
+  #     - {events: [failed, instance_failed, sla_missed], channels: [ops]}

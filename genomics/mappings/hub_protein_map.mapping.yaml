@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata: {name: hub_protein_map, description: 'HUB Protein – Schlüssel über die UniProt-Accession.'}
+input: {schema: stage_protein_s}
+output: {schema: hub_protein_s}
+fields:
+  hk_protein: "sha256(rec.accession)"
+  accession: rec.accession

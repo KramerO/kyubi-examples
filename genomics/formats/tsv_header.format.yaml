@@ -1,0 +1,12 @@
+apiVersion: kyubi/v1
+kind: Format
+metadata:
+  name: tsv_header
+  description: Tab-getrennt mit Kopfzeile – so liefert die UniProt-REST-Schnittstelle (M26)
+type: delimited
+delimiter: "\t"
+header: true
+encoding: utf-8
+newline: auto
+quote: null
+null_values: [""]

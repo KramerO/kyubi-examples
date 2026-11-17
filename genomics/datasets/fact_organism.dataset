@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: fact_organism, description: 'Mart – Kennzahlen je Organismus und Tag'}
+type: table
+db_config: genomics
+table: gen_mart.fact_organism
+schema: fact_organism_s
+tags: [genomics]

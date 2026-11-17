@@ -1,0 +1,29 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata:
+  name: stage_protein_map
+  description: >-
+    UniProt-Zeilen typisieren. Keine Fachlogik – nur Text zu Typ. Zwei Besonderheiten der
+    Quelle: `mass` kommt mit Tausenderkommas („12,345"), und die Domänenliste ist ein
+    langer Text, in dem jede Domäne mit „DOMAIN" beginnt – gezählt wird, nicht geparst.
+input: {schema: uniprot_raw}
+output: {schema: stage_protein_in_s}
+reject_if:
+  - {when: "is_null(rec.accession) or rec.accession == ''", message: Accession fehlt – kein Schlüssel}
+variables:
+  fetched: "dates.parse_timestamp(rec.fetched_at, '%Y-%m-%d %H:%M:%S')"
+fields:
+  business_date: "dates.to_date(fetched)"
+  accession: rec.accession
+  entry_name: rec.entry_name
+  protein_name: "strings.left(rec.protein_name, 400)"
+  gene_primary: rec.gene_primary
+  organism_name: "strings.left(rec.organism_name, 200)"
+  organism_id: "numbers.to_int(rec.organism_id)"
+  aa_length: "numbers.to_int(rec.length)"
+  mass_da: "numbers.to_int(strings.replace(rec.mass, ',', ''))"
+  has_function_text: "not is_null(rec.function_text) and rec.function_text != ''"
+  # `strings.split` lässt leere Teile weg: Der Text beginnt mit "DOMAIN", also ist die
+  # Zahl der Teile schon die Zahl der Domänen – ohne Abzug, und ohne Domänen sind es 0.
+  domain_count: "lists.size(strings.split(rec.domains, 'DOMAIN'))"
+  fetched_at: fetched

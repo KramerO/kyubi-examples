@@ -1,0 +1,15 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata: {name: link_sequence_organism_map, description: 'LINK Sequenz ↔ Organismus.'}
+input: {schema: stage_sequence_s}
+output: {schema: link_sequence_organism_s}
+filter: "not is_null(rec.organism_id)"
+variables:
+  hk_sequence: "sha256(rec.accession_base)"
+  hk_organism: "sha256(rec.organism_id)"
+fields:
+  hk_sequence_organism: "sha256(hk_sequence, hk_organism)"
+  hk_sequence: hk_sequence
+  hk_organism: hk_organism
+  business_date: rec.business_date
+  record_source: "strings.concat('sequence/', rec.source)"

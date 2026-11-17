@@ -1,0 +1,15 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata: {name: link_protein_gene_map, description: 'LINK Protein ↔ Gen (nur mit Gensymbol).'}
+input: {schema: stage_protein_s}
+output: {schema: link_protein_gene_s}
+filter: "not is_null(rec.gene_primary) and rec.gene_primary != '' and not is_null(rec.organism_id)"
+variables:
+  hk_protein: "sha256(rec.accession)"
+  hk_gene: "sha256(rec.organism_id, rec.gene_primary)"
+fields:
+  hk_protein_gene: "sha256(hk_protein, hk_gene)"
+  hk_protein: hk_protein
+  hk_gene: hk_gene
+  business_date: rec.business_date
+  record_source: "'uniprot/swissprot'"

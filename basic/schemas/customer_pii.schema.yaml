@@ -1,0 +1,21 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata:
+  name: customer_pii
+  description: Kundenstamm mit verschlüsselten PII-Feldern (KyubiKeyStore, M24)
+fields:
+  - {name: customer_id, type: int64, nullable: false}
+  # Der Weg zurück zum Schlüssel des Datensatzes: 64 Hexzeichen, nie abschneiden.
+  - {name: key_id, type: string, max_length: 64, nullable: false}
+  # Geheimtext braucht Platz: aus 100 Zeichen Klartext werden 177 (kyubi validate rechnet nach).
+  - {name: name, type: string, max_length: 177, sensitive: true}
+  # Ein Datum wird vor dem Verschlüsseln zu Text (ISO) – aus 10 Zeichen werden 57.
+  - {name: birth_date, type: string, max_length: 57, sensitive: true}
+  - {name: amount, type: decimal, precision: 12, scale: 2, default: "0.00"}
+  - {name: created_at, type: timestamp, unit: ms, tz: Europe/Berlin}
+  - {name: status, type: enum, values: [active, inactive, blocked], default: active}
+  - {name: street, type: string}
+  - {name: zip, type: string, max_length: 5}
+  - {name: city, type: string}
+keys:
+  primary: [customer_id]

@@ -1,0 +1,7 @@
+apiVersion: kyubi/v1
+kind: ParameterSet
+metadata:
+  name: reporting_mart_load
+  description: Graph reporting_mart für einen Fachtag – RUN_DATE liefert der Plan.
+graph: reporting_mart
+parameters: {}

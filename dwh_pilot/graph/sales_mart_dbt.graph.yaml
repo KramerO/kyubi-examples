@@ -3,6 +3,10 @@ kind: Graph
 metadata:
   name: sales_mart_dbt
   description: Parallelbetrieb (M21) – sales_mart in dbt rechnen und mit dem Kyubi-Ergebnis abgleichen
+# Kein Job im Jobnetz: dbt ist ein externes Werkzeug und wird für den Piloten nicht gebraucht.
+# Wer den Abgleich zeigen will: dbt installieren, einmal
+#   uv run kyubi dbt export sales_mart -C examples/dwh_pilot
+# und diesen Graphen von Hand starten (oder sich einen Job dafür anlegen).
 parameters:
   - {name: RUN_DATE, type: date, required: true}
 components:

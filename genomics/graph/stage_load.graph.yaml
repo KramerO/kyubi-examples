@@ -1,0 +1,101 @@
+apiVersion: kyubi/v1
+kind: Graph
+metadata:
+  name: stage_load
+  description: >-
+    Beide Quellen holen und in die STAGE laden (M26): geprüfte Proteine aus UniProt/SwissProt
+    und Genomsequenzen aus NCBI bzw. ENA. Optional Kaggle – ohne Zugangsdaten schreibt das
+    Skript eine leere Datei und der Lauf geht weiter.
+
+    Zwei Phasen: Erst holen alle Skripte ihre Dateien ins Landing, dann wird gelesen. Ohne
+    die Grenze läse `input_file` das Verzeichnis, während noch hineingeschrieben wird.
+parameters:
+  - {name: RUN_DATE, type: date, default: "${today()}"}
+  - {name: MAX_ROWS, type: int, default: 2000, description: "Obergrenze je Organismus bei UniProt"}
+components:
+  fetch_proteins:
+    type: run_program
+    params:
+      command:
+        default:
+          - python3
+          - "${ROOT}/scripts/fetch_uniprot.py"
+          - "--out"
+          - "${LANDING_ROOT}/${fmt(RUN_DATE, '%Y-%m-%d')}"
+          - "--organisms"
+          - "${ROOT}/seeds/organisms.csv"
+          - "--max-rows"
+          - "${MAX_ROWS}"
+      timeout: 15m
+  fetch_sequences:
+    type: run_program
+    params:
+      command:
+        default:
+          - python3
+          - "${ROOT}/scripts/fetch_sequences.py"
+          - "--out"
+          - "${LANDING_ROOT}/${fmt(RUN_DATE, '%Y-%m-%d')}"
+          - "--sequences"
+          - "${ROOT}/seeds/sequences.csv"
+      timeout: 30m
+  fetch_kaggle:
+    type: run_program
+    params:
+      command:
+        default:
+          - python3
+          - "${ROOT}/scripts/fetch_kaggle.py"
+          - "--out"
+          - "${LANDING_ROOT}/${fmt(RUN_DATE, '%Y-%m-%d')}"
+          - "--datasets"
+          - "${ROOT}/seeds/kaggle.csv"
+      timeout: 30m
+  read_proteins:
+    type: input_file
+    params: {path: "${LANDING_ROOT}/${fmt(RUN_DATE, '%Y-%m-%d')}/*__proteins.tsv", schema: uniprot_raw, format: tsv_header}
+  map_proteins:
+    type: reformat
+    params: {mapping: stage_protein_map}
+  dedup_proteins:
+    # Ein zweiter Lauf am selben Tag legt eine zweite Datei ins Landing; der Lesestern
+    # liest beide. Ohne Dedup bekäme der Upsert denselben Schlüssel zweimal in einem
+    # Befehl – PostgreSQL lehnt das ab („cannot affect row a second time"). Die Dateien
+    # kommen in Namensreihenfolge, also ist der jüngste Abzug der letzte.
+    type: dedup
+    params: {key: [accession], keep: last}
+  stamp_proteins:
+    type: audit_columns
+    params: {output_schema: stage_protein_s, loaded_at_field: load_ts}
+  write_proteins:
+    type: output_table
+    params: {dataset: stage_protein, mode: upsert, key: [accession], create: true}
+  read_sequences:
+    type: input_file
+    params: {path: "${LANDING_ROOT}/${fmt(RUN_DATE, '%Y-%m-%d')}/*__sequences.tsv", schema: sequence_raw, format: tsv_header}
+  map_sequences:
+    type: reformat
+    params: {mapping: stage_sequence_map}
+  dedup_sequences:
+    type: dedup
+    params: {key: [accession, source], keep: last}
+  stamp_sequences:
+    type: audit_columns
+    params: {output_schema: stage_sequence_s, loaded_at_field: load_ts}
+  write_sequences:
+    type: output_table
+    # Schlüssel = Accession × Quelle: dasselbe Genom darf aus NCBI *und* aus Kaggle kommen
+    params: {dataset: stage_sequence, mode: upsert, key: [accession, source], create: true}
+flows:
+  - {from: read_proteins.out, to: map_proteins.in}
+  - {from: map_proteins.out, to: dedup_proteins.in}
+  - {from: dedup_proteins.out, to: stamp_proteins.in}
+  - {from: stamp_proteins.out, to: write_proteins.in}
+  - {from: read_sequences.out, to: map_sequences.in}
+  - {from: map_sequences.out, to: dedup_sequences.in}
+  - {from: dedup_sequences.out, to: stamp_sequences.in}
+  - {from: stamp_sequences.out, to: write_sequences.in}
+phases:
+  - [fetch_proteins, fetch_sequences, fetch_kaggle]
+  - [read_proteins, map_proteins, dedup_proteins, stamp_proteins, write_proteins,
+     read_sequences, map_sequences, dedup_sequences, stamp_sequences, write_sequences]

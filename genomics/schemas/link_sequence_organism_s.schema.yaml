@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: link_sequence_organism_s, description: 'RawVault – LINK Sequenz ↔ Organismus'}
+fields:
+  - {name: hk_sequence_organism, type: string, nullable: false, max_length: 64}
+  - {name: hk_sequence, type: string, nullable: false, max_length: 64}
+  - {name: hk_organism, type: string, nullable: false, max_length: 64}
+  - {name: business_date, type: date, nullable: false}
+  - {name: record_source, type: string, max_length: 32}

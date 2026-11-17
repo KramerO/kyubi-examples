@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: hub_organism, description: 'RawVault – HUB Organismus (beide Quellen)'}
+type: table
+db_config: genomics
+table: gen_vault.hub_organism
+schema: hub_organism_s
+tags: [genomics]

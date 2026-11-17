@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: link_sequence_organism, description: 'RawVault – LINK Sequenz ↔ Organismus'}
+type: table
+db_config: genomics
+table: gen_vault.link_sequence_organism
+schema: link_sequence_organism_s
+tags: [genomics]

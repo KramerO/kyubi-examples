@@ -1,0 +1,4 @@
+taxon_id,label,uniprot_query,note
+2697049,SARS-CoV-2,reviewed:true AND taxonomy_id:2697049,17 geprüfte Proteine – der ganze Erreger
+128952,Zaire ebolavirus (Mayinga-76),reviewed:true AND taxonomy_id:128952,Referenzstamm der Ausbrüche 1976
+632,Yersinia pestis,reviewed:true AND taxonomy_id:632,Pest – mehrere hundert geprüfte Proteine

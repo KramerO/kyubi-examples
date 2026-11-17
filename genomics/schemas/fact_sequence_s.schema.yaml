@@ -1,0 +1,14 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: fact_sequence_s, description: 'Mart – je Genomsequenz und Fachtag: Länge, GC-Anteil, unbestimmte Basen'}
+fields:
+  - {name: business_date, type: date, nullable: false}
+  - {name: accession_base, type: string, nullable: false, max_length: 32}
+  - {name: organism_id, type: int64}
+  - {name: source, type: string, nullable: false, max_length: 16}
+  - {name: description, type: string, max_length: 400}
+  - {name: bases, type: int64}
+  - {name: gc_percent, type: decimal, precision: 5, scale: 2}
+  - {name: n_count, type: int64}
+keys:
+  primary: [business_date, accession_base, source]

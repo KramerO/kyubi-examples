@@ -1,0 +1,9 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata: {name: hub_organism_protein_map, description: 'HUB Organismus aus der Proteinquelle.'}
+input: {schema: stage_protein_s}
+output: {schema: hub_organism_s}
+filter: "not is_null(rec.organism_id)"
+fields:
+  hk_organism: "sha256(rec.organism_id)"
+  organism_id: rec.organism_id

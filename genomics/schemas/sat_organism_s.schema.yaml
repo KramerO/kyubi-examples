@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: sat_organism_s, description: 'RawVault – SAT Organismus (Name aus UniProt; bitemporal)'}
+fields:
+  - {name: hk_organism, type: string, nullable: false, max_length: 64}
+  - {name: organism_id, type: int64, nullable: false}
+  - {name: organism_name, type: string, max_length: 200}
+  - {name: record_source, type: string, max_length: 32}

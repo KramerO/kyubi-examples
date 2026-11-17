@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: sat_organism, description: 'RawVault – SAT Organismus (bitemporal)'}
+type: table
+db_config: genomics
+table: gen_vault.sat_organism
+schema: sat_organism_s
+tags: [genomics]

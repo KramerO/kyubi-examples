@@ -1,0 +1,20 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata:
+  name: sat_sequence_map
+  description: >-
+    SAT Sequenz je Quelle. Zwei Quellen desselben Genoms ergeben zwei Zeilen mit
+    demselben `hk_sequence`; stimmen ihre `sha256` überein, ist es wirklich dasselbe.
+input: {schema: stage_sequence_s}
+output: {schema: sat_sequence_s}
+fields:
+  hk_sequence: "sha256(rec.accession_base)"
+  accession: rec.accession
+  source: rec.source
+  description: rec.description
+  bases: rec.bases
+  gc_count: rec.gc_count
+  n_count: rec.n_count
+  gc_percent: rec.gc_percent
+  sha256: rec.sha256
+  record_source: "strings.concat('sequence/', rec.source)"

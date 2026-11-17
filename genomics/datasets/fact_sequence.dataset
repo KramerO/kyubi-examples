@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: fact_sequence, description: 'Mart – Kennzahlen je Genomsequenz und Tag'}
+type: table
+db_config: genomics
+table: gen_mart.fact_sequence
+schema: fact_sequence_s
+tags: [genomics]

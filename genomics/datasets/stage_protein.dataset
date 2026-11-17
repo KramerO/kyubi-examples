@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: stage_protein, description: 'STAGE – geprüfte Proteine (UniProt)'}
+type: table
+db_config: genomics
+table: gen_stage.stage_protein
+schema: stage_protein_s
+tags: [genomics]

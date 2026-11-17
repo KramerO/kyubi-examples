@@ -1,0 +1,10 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata:
+  name: hub_organism_s
+  description: >-
+    RawVault – HUB Organismus (Geschäftsschlüssel: NCBI-Taxon-Nummer). Hier treffen sich die
+    beiden Quellen dieses Strangs: die Proteine aus UniProt und die Genome aus NCBI/ENA.
+fields:
+  - {name: hk_organism, type: string, nullable: false, max_length: 64}
+  - {name: organism_id, type: int64, nullable: false}

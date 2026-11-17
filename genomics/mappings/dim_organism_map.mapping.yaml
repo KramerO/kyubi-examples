@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata: {name: dim_organism_map, description: 'Mart – Dimension Organismus aus dem Vault.'}
+input: {schema: sat_organism_s}
+output: {schema: dim_organism_s}
+fields:
+  organism_id: rec.organism_id
+  organism_name: rec.organism_name

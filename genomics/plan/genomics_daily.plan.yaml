@@ -1,0 +1,24 @@
+apiVersion: kyubi/v1
+kind: Plan
+metadata:
+  name: genomics_daily
+  description: >-
+    Der ganze Strang für einen Fachtag (M26): Quellen holen und in die STAGE, dann der
+    RawVault, dann der Mart. Drei Schritte nacheinander – der RawVault liest, was die
+    STAGE geschrieben hat.
+parameters:
+  RUN_DATE: "${instance.business_date}"
+jobs:
+  stage:
+    param_set: stage_load_load
+    # RUN_DATE muss hier wiederholt werden: Plan-Parameter erreichen einen Job mit
+    # `param_set:` erst seit WP-23.6, und ein gepinntes Datum soll trotzdem gewinnen.
+    params: {RUN_DATE: "${instance.business_date}"}
+  vault:
+    param_set: raw_vault_load
+    params: {RUN_DATE: "${instance.business_date}"}
+    depends_on: [stage]
+  mart:
+    param_set: reporting_mart_load
+    params: {RUN_DATE: "${instance.business_date}"}
+    depends_on: [vault]

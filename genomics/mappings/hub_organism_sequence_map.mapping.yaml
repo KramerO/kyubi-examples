@@ -1,0 +1,14 @@
+apiVersion: kyubi/v1
+kind: Mapping
+metadata:
+  name: hub_organism_sequence_map
+  description: >-
+    HUB Organismus aus der Sequenzquelle – **derselbe** Hub wie aus den Proteinen. Das ist
+    die Harmonisierung dieses Strangs: UniProt und NCBI/ENA kennen beide die Taxon-Nummer,
+    also treffen sie sich dort (M26).
+input: {schema: stage_sequence_s}
+output: {schema: hub_organism_s}
+filter: "not is_null(rec.organism_id)"
+fields:
+  hk_organism: "sha256(rec.organism_id)"
+  organism_id: rec.organism_id

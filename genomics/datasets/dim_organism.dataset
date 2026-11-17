@@ -1,0 +1,8 @@
+apiVersion: kyubi/v1
+kind: Dataset
+metadata: {name: dim_organism, description: 'Mart – Dimension Organismus'}
+type: table
+db_config: genomics
+table: gen_mart.dim_organism
+schema: dim_organism_s
+tags: [genomics]

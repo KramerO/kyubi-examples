@@ -1,0 +1,15 @@
+apiVersion: kyubi/v1
+kind: Schema
+metadata: {name: sequence_raw, description: 'FASTA-Kennzahlen aus NCBI/ENA (TSV mit Kopfzeile) – alles Text (M26)'}
+fields:
+  - {name: fetched_at, type: string}
+  - {name: accession, type: string}
+  - {name: source, type: string}
+  - {name: organism_taxon, type: string}
+  - {name: description, type: string}
+  - {name: length, type: string}
+  - {name: gc_count, type: string}
+  - {name: n_count, type: string}
+  - {name: sha256, type: string}
+  - {name: head, type: string}
+  - {name: file, type: string}
